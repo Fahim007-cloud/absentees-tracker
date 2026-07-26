@@ -1,0 +1,16 @@
+{
+  "name": "Student Absentees Tracker",
+  "short_name": "Absentees",
+  "description": "Track daily student attendance and share the absentees list as an image.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3F6FE",
+  "theme_color": "#F3F6FE",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
