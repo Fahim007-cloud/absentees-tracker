@@ -6,7 +6,10 @@
 <title>Student Absentees Tracker</title>
 <meta name="theme-color" content="#F3F6FE">
 
+<<<<<<< HEAD
 <!-- PWA -->
+=======
+>>>>>>> 5384879 (Update project)
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,10 +21,18 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<<<<<<< HEAD
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+=======
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+>>>>>>> 5384879 (Update project)
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -39,8 +50,17 @@
     --red: #E0525F;
     --red-tint: #FCEDEF;
     --red-line: #F6D3D7;
+<<<<<<< HEAD
     --glass-bg: rgba(255,255,255,0.62);
     --glass-bg-solid: rgba(255,255,255,0.86);
+=======
+    --amber: #D98A2B;
+    --amber-tint: #FCF3E3;
+    --amber-line: #F3DFB4;
+    --green: #2FA36B;
+    --green-tint: #E7F6EE;
+    --line: #E4E9F7;
+>>>>>>> 5384879 (Update project)
     --glass-border: rgba(255,255,255,0.75);
     --shadow-glass: 0 8px 26px -12px rgba(30,58,138,0.20), 0 1px 2px rgba(30,58,138,0.05);
     --shadow-float: 0 14px 30px -10px rgba(62,98,232,0.55);
@@ -58,6 +78,7 @@
     color: var(--ink);
     background: #F3F6FE;
     min-height:100vh;
+<<<<<<< HEAD
     overflow-x:hidden;
   }
 
@@ -82,6 +103,181 @@
     background: rgba(243,246,254,0.82);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+=======
+  }
+
+  #root{ position:relative; max-width: 480px; margin:0 auto; min-height:100vh; }
+
+  @keyframes dropIn{ from{ opacity:0; transform: translateY(-6px); } to{ opacity:1; transform:none; } }
+  @keyframes fadeUp{ from{ opacity:0; transform: translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .spinner{
+    width:24px; height:24px; border-radius:50%;
+    border:3px solid var(--indigo-tint); border-top-color: var(--indigo);
+    margin: 16px auto; animation: spin .8s linear infinite;
+  }
+
+  .btn{
+    border:none; cursor:pointer; font-family:'Inter', sans-serif; font-weight:600;
+    border-radius:14px; transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .btn:active{ transform: translateY(1px) scale(.99); }
+  .btn:disabled{ opacity:.55; pointer-events:none; }
+  .btn-primary{
+    background: linear-gradient(180deg, var(--indigo), var(--indigo-deep));
+    color:#fff; font-size:14.5px; padding:13px 18px;
+    box-shadow: 0 10px 20px -8px rgba(62,98,232,0.55);
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-outline{
+    background:#fff; border:1.5px solid var(--indigo-line); color: var(--indigo-deep);
+    font-size:14px; padding:11px 16px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-outline:hover{ background: var(--indigo-tint); }
+  .btn-danger-outline{
+    background:#fff; border:1.5px solid var(--red-line); color: var(--red);
+    font-size:13px; padding:9px 14px;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .btn-danger-outline:hover{ background: var(--red-tint); }
+  .btn svg{ width:15px; height:15px; }
+
+  .field{ margin-bottom:12px; }
+  .field label{ display:block; font-size:11.5px; font-weight:600; color: var(--ink-soft); margin:0 0 6px 4px; }
+  .field input, .field select{
+    width:100%; border:1.5px solid var(--line); background:#FBFCFF;
+    border-radius:14px; padding:12px 15px; font-size:15px;
+    font-family:'Inter', sans-serif; color: var(--ink); outline:none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    appearance:none; -webkit-appearance:none;
+  }
+  .field input:focus, .field select:focus{ border-color: var(--indigo); box-shadow: 0 0 0 4px var(--indigo-tint); }
+  .row-2{ display:flex; gap:12px; }
+  .row-2 .field{ flex:1; }
+
+  /* ---------- custom date picker ---------- */
+  .datepicker-trigger{
+    width:100%; display:flex; align-items:center; gap:10px;
+    border:1.5px solid var(--line); background:#FBFCFF; border-radius:14px;
+    padding:12px 15px; font-size:14.5px; font-family:'Inter', sans-serif; color: var(--ink);
+    cursor:pointer; text-align:left; transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .datepicker-trigger:hover{ border-color: var(--indigo); }
+  .datepicker-trigger:active{ transform: translateY(1px); }
+  .datepicker-trigger svg{ width:16px; height:16px; color: var(--ink-faint); flex:0 0 auto; }
+  .datepicker-trigger .dp-placeholder{ color: var(--ink-faint); }
+
+  .datepicker-backdrop{
+    position:fixed; inset:0; background:rgba(20,30,60,0.4); z-index:70;
+    animation: dpFade .2s ease;
+  }
+  @keyframes dpFade{ from{ opacity:0; } to{ opacity:1; } }
+
+  .datepicker-popup{
+    position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+    z-index:71; background:#fff; border-radius:22px; padding:18px;
+    width:320px; max-width:88vw;
+    box-shadow: 0 30px 60px -20px rgba(15,25,60,0.45);
+    animation: dpPop .22s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes dpPop{ from{ opacity:0; transform:translate(-50%,-50%) scale(.92); } to{ opacity:1; transform:translate(-50%,-50%) scale(1); } }
+  @keyframes popIn{ from{ opacity:0; transform: scale(.92); } to{ opacity:1; transform: scale(1); } }
+
+  .datepicker-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .datepicker-header span{ font-family:'Sora', sans-serif; font-weight:700; font-size:14.5px; color: var(--ink); }
+  .datepicker-header button{
+    width:30px; height:30px; border-radius:10px; border:none; background: var(--indigo-tint);
+    color: var(--indigo-deep); display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition: background .15s ease;
+  }
+  .datepicker-header button:hover{ background: var(--indigo-line); }
+  .datepicker-header button:disabled{ opacity:.3; pointer-events:none; }
+  .datepicker-header button svg{ width:14px; height:14px; }
+
+  .datepicker-weekdays{ display:grid; grid-template-columns:repeat(7,1fr); margin-bottom:2px; }
+  .datepicker-weekdays span{ text-align:center; font-size:10px; font-weight:700; color: var(--ink-faint); padding:4px 0; }
+
+  .datepicker-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .datepicker-day{
+    aspect-ratio:1; border:none; background:transparent; border-radius:10px;
+    font-family:'Inter', sans-serif; font-size:12.5px; font-weight:500; color: var(--ink);
+    cursor:pointer; transition: background .12s ease, color .12s ease;
+  }
+  .datepicker-day:hover:not(:disabled){ background: var(--indigo-tint); }
+  .datepicker-day.today{ color: var(--indigo-deep); font-weight:700; box-shadow: inset 0 0 0 1.5px var(--indigo-line); }
+  .datepicker-day.selected{ background: linear-gradient(135deg, var(--indigo), var(--indigo-deep)); color:#fff; font-weight:700; }
+  .datepicker-day:disabled{ color: var(--ink-faint); opacity:.35; cursor:not-allowed; }
+
+  .datepicker-footer{ margin-top:10px; display:flex; justify-content:flex-end; }
+  .datepicker-today-btn{
+    border:none; background: var(--indigo-tint); color: var(--indigo-deep);
+    font-family:'Inter', sans-serif; font-size:12px; font-weight:600;
+    padding:7px 14px; border-radius:999px; cursor:pointer; transition: background .15s ease;
+  }
+  .datepicker-today-btn:hover{ background: var(--indigo-line); }
+
+  .card{
+    background:#fff; border:1px solid var(--glass-border); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-glass); padding:18px; margin-bottom:16px;
+  }
+
+  .empty-state{ text-align:center; padding: 24px 10px 14px; color: var(--ink-soft); }
+  .empty-state .glyph{ margin-bottom:8px; opacity:.4; display:flex; justify-content:center; }
+  .empty-state .glyph svg{ width:26px; height:26px; }
+  .empty-state p{ margin:0; font-size:13.5px; }
+  .empty-state span{ font-size:11.5px; color: var(--ink-faint); }
+
+  .toast{
+    position:fixed; left:50%; bottom:24px; transform: translateX(-50%) translateY(20px);
+    background: var(--ink); color:#fff; font-size:13px; font-weight:500;
+    padding: 11px 18px; border-radius:999px; box-shadow: 0 12px 28px -8px rgba(0,0,0,.35);
+    opacity:0; pointer-events:none; transition: opacity .25s ease, transform .25s ease;
+    z-index:80; max-width:88vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  /* ---------- Login screen ---------- */
+  .login-wrap{
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding: 24px 22px; position:relative; overflow:hidden;
+    background: linear-gradient(160deg, #1E3A8A 0%, #3E62E8 55%, #7C9CF7 130%);
+  }
+  .login-wrap::after{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(420px 240px at 85% -10%, rgba(255,255,255,0.16), transparent 60%);
+    pointer-events:none;
+  }
+  .login-card{
+    position:relative; background:#fff; border-radius: 26px;
+    box-shadow: 0 30px 60px -20px rgba(15,25,60,0.45);
+    padding: 30px 24px; animation: fadeUp .5s cubic-bezier(.22,1,.36,1);
+  }
+  .login-mark{
+    width:52px; height:52px; border-radius:16px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--indigo), var(--indigo-deep));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 10px 20px -8px rgba(62,98,232,0.55);
+  }
+  .login-mark svg{ width:26px; height:26px; color:#fff; }
+  .login-card h1{
+    font-family:'Sora', sans-serif; font-size:21px; font-weight:700; text-align:center;
+    margin: 0 0 4px; letter-spacing:-0.01em;
+  }
+  .login-card p.sub{ text-align:center; color: var(--ink-soft); font-size:13px; margin:0 0 24px; }
+  .login-error{
+    background: var(--red-tint); border:1px solid var(--red-line); color:#A5404A;
+    font-size:12.5px; border-radius: var(--radius-sm); padding:10px 13px; margin-bottom:14px;
+  }
+
+  /* ---------- App shell (post-login) ---------- */
+  .topbar{
+    position: sticky; top:0; z-index:20;
+    padding: 16px 16px 14px;
+    background: rgba(243,246,254,0.9);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+>>>>>>> 5384879 (Update project)
   }
   .topbar-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
   .brand{ display:flex; align-items:center; gap:10px; }
@@ -92,6 +288,7 @@
     box-shadow: 0 6px 14px -6px rgba(62,98,232,0.6);
   }
   .brand .mark svg{ width:19px; height:19px; color:#fff; }
+<<<<<<< HEAD
   .brand h1{
     font-family:'Sora', sans-serif;
     font-size: 16.5px; font-weight:700;
@@ -492,19 +689,72 @@
 <div class="blob blob-2"></div>
 <div class="blob blob-3"></div>
 
+=======
+  .brand h1{ font-family:'Sora', sans-serif; font-size:16px; font-weight:700; margin:0; line-height:1.2; }
+  .brand .role-pill{
+    display:inline-block; margin-top:2px; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.04em; color: var(--indigo-deep);
+    background: var(--indigo-tint); padding:2px 8px; border-radius:999px;
+  }
+  .icon-btn{
+    width:38px; height:38px; border-radius:12px;
+    border:1px solid var(--glass-border); background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color: var(--ink-soft); flex:0 0 auto;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+  }
+  .icon-btn:hover{ color: var(--red); }
+  .icon-btn:active{ transform: scale(.94); }
+  .icon-btn svg{ width:17px; height:17px; }
+
+  .content{ padding: 4px 16px 100px; }
+
+  .segmented{
+    display:flex; background: var(--indigo-tint); border-radius:14px; padding:4px; margin-bottom:16px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch;
+  }
+  .segmented::-webkit-scrollbar{ display:none; }
+  .segmented button{
+    flex:1 0 auto; min-width:64px; border:none; background:transparent; cursor:pointer;
+    font-family:'Inter', sans-serif; font-size:12.5px; font-weight:600; color: var(--ink-soft);
+    padding: 9px 10px; border-radius:11px; transition: background .15s ease, color .15s ease;
+    white-space:nowrap;
+  }
+  .segmented button.active{ background:#fff; color: var(--indigo-deep); box-shadow: var(--shadow-glass); }
+
+  .section-head{ display:flex; align-items:center; justify-content:space-between; margin: 4px 2px 12px; }
+  .section-head h2{ font-family:'Sora', sans-serif; font-size:15.5px; font-weight:700; margin:0; }
+  .count{
+    font-family:'Inter', sans-serif; font-size:11px; color: var(--ink-soft);
+    background: var(--indigo-tint); padding:3px 9px; border-radius:999px;
+  }
+  .count.red{ background: var(--red-tint); color:#A5404A; }
+  .count.amber{ background: var(--amber-tint); color:#8A5A14; }
+</style>
+</head>
+<body>
+>>>>>>> 5384879 (Update project)
 <div id="root"></div>
 
 <script type="text/plain" id="app-source">
 const { useState, useEffect, useRef, useMemo } = React;
 
 // ============================================================
+<<<<<<< HEAD
 // SUPABASE CONFIG — same project as your other attendance app.
+=======
+// SUPABASE CONFIG — same project as the rest of the app suite.
+>>>>>>> 5384879 (Update project)
 // ============================================================
 const SUPABASE_URL = 'https://nwqhigskbldybobcdrgv.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_RrNiWXYkZn1RJyb3z9Idzg_tn6QAdeO';
 const isConfigured = SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 10;
 const db = isConfigured ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
+<<<<<<< HEAD
+=======
+// ---------------- shared helpers ----------------
+>>>>>>> 5384879 (Update project)
 function todayInfo(){
   const d = new Date();
   const off = d.getTimezoneOffset();
@@ -513,6 +763,20 @@ function todayInfo(){
   const day = d.toLocaleDateString('en-US', { weekday: 'long' });
   return { date, day };
 }
+<<<<<<< HEAD
+=======
+function dayOfWeek(dateStr){
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  return dt.toLocaleDateString('en-US', { weekday: 'long' });
+}
+function formatDisplayDate(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-');
+  const dt = new Date(Number(y), Number(m)-1, Number(d));
+  return dt.toLocaleDateString('en-US', { day:'2-digit', month:'short', year:'numeric' });
+}
+>>>>>>> 5384879 (Update project)
 function initials(name){
   return name.trim().split(/\s+/).slice(0,2).map(w => w[0]?.toUpperCase() || '').join('');
 }
@@ -521,6 +785,7 @@ function rollCompare(a, b){
   if (!isNaN(na) && !isNaN(nb) && String(na) === a.trim() && String(nb) === b.trim()) return na - nb;
   return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
 }
+<<<<<<< HEAD
 
 // ============================================================
 // Offline support — local cache + write queue.
@@ -549,6 +814,72 @@ function isLocalId(id){
   return typeof id === 'string' && id.startsWith('local-');
 }
 function getQueue(){ return lsGet(LS_QUEUE_KEY, []); }
+=======
+function roleLabel(role){
+  if (role === 'admin') return 'Admin';
+  if (role === 'teacher') return 'Teacher';
+  if (role === 'representative') return 'Representative';
+  return role;
+}
+function exportStudentsCSV(students){
+  const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
+  const rows = [['Name', 'Roll No'], ...students.map(s => [s.name, s.roll_no])];
+  const csv = rows.map(r => r.map(esc).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'student-list.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportStudentsPDF(students){
+  if (typeof window.jspdf === 'undefined') return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const marginX = 42;
+  const bottomLimit = pageHeight - 56;
+  let y = 58;
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(19);
+  doc.setTextColor(27, 37, 64);
+  doc.text('Student List', marginX, y);
+  y += 20;
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+  doc.setTextColor(94, 107, 140);
+  doc.text(`Total ${students.length} student${students.length === 1 ? '' : 's'}`, marginX, y);
+  y += 28;
+
+  const sorted = [...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no));
+  const rowHeight = 26;
+  const rowWidth = pageWidth - marginX * 2;
+
+  sorted.forEach((s, i) => {
+    if (y + rowHeight > bottomLimit){ doc.addPage(); y = 58; }
+    if (i % 2 === 1){ doc.setFillColor(246, 248, 253); doc.rect(marginX, y, rowWidth, rowHeight, 'F'); }
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+    doc.setTextColor(27, 37, 64);
+    doc.text(s.name, marginX + 8, y + 17);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    doc.setTextColor(94, 107, 140);
+    doc.text(`Roll ${s.roll_no}`, marginX + rowWidth - 8, y + 17, { align: 'right' });
+    y += rowHeight;
+  });
+
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= pageCount; p++){
+    doc.setPage(p);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+    doc.setTextColor(154, 166, 196);
+    doc.text('Generated by Student Absentees Tracker', marginX, pageHeight - 26);
+    doc.text(`Page ${p} of ${pageCount}`, pageWidth - marginX, pageHeight - 26, { align: 'right' });
+  }
+
+  doc.save('student-list.pdf');
+}
+>>>>>>> 5384879 (Update project)
 
 function useToast(){
   const [msg, setMsg] = useState('');
@@ -557,17 +888,25 @@ function useToast(){
   const fire = (text) => {
     setMsg(text); setShow(true);
     clearTimeout(timer.current);
+<<<<<<< HEAD
     timer.current = setTimeout(() => setShow(false), 2400);
   };
   return { msg, show, fire };
 }
 
+=======
+    timer.current = setTimeout(() => setShow(false), 2600);
+  };
+  return { msg, show, fire };
+}
+>>>>>>> 5384879 (Update project)
 function Toast({ msg, show }){
   return <div className={"toast" + (show ? " show" : "")}>{msg}</div>;
 }
 
 function Icon({ name, ...props }){
   const paths = {
+<<<<<<< HEAD
     plus: <path d="M12 5v14M5 12h14"/>,
     search: <><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></>,
     sortAsc: <path d="M3 6h13M3 12h9M3 18h5M18 18V6m0 0l-4 4m4-4l4 4"/>,
@@ -577,6 +916,22 @@ function Icon({ name, ...props }){
     cap: <><path d="M22 10L12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></>,
     file: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></>,
     offline: <><path d="M1 1l22 22"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.58 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/></>
+=======
+    cap: <><path d="M22 10L12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></>,
+    plus: <path d="M12 5v14M5 12h14"/>,
+    trash: <><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></>,
+    logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></>,
+    users: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>,
+    file: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></>,
+    calendar: <><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></>,
+    download: <><path d="M12 3v13"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></>,
+    share: <><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/><path d="M5 21h14"/></>,
+    check: <path d="M20 6L9 17l-5-5"/>,
+    chevronRight: <path d="M9 18l6-6-6-6"/>,
+    briefcase: <><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>,
+    lock: <><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>,
+    mail: <><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></>
+>>>>>>> 5384879 (Update project)
   };
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round" {...props}>
@@ -585,6 +940,7 @@ function Icon({ name, ...props }){
   );
 }
 
+<<<<<<< HEAD
 function StudentCard({ student, isAbsent, index, manageMode, onToggle, onDelete }){
   const [leaving, setLeaving] = useState(false);
 
@@ -613,11 +969,290 @@ function StudentCard({ student, isAbsent, index, manageMode, onToggle, onDelete 
         <span className="del-btn del-btn-visible" aria-label="Delete student">
           <Icon name="trash" />
         </span>
+=======
+// ---------------- Custom date picker ----------------
+function parseDateStr(str){
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+function formatDateStr(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function DatePicker({ value, onChange, max, min }){
+  const [open, setOpen] = useState(false);
+  const [viewMonth, setViewMonth] = useState(() => {
+    const d = value ? parseDateStr(value) : new Date();
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+
+  useEffect(() => {
+    if (open){
+      const d = value ? parseDateStr(value) : new Date();
+      setViewMonth(new Date(d.getFullYear(), d.getMonth(), 1));
+    }
+  }, [open]);
+
+  const selectedDate = value ? parseDateStr(value) : null;
+  const maxDate = max ? parseDateStr(max) : null;
+  const minDate = min ? parseDateStr(min) : null;
+  const today = new Date();
+
+  const year = viewMonth.getFullYear();
+  const month = viewMonth.getMonth();
+  const firstWeekday = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const cells = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  function isDisabled(d){
+    const dt = new Date(year, month, d);
+    if (maxDate && dt > maxDate) return true;
+    if (minDate && dt < minDate) return true;
+    return false;
+  }
+  function isSelected(d){
+    return !!selectedDate && selectedDate.getFullYear() === year && selectedDate.getMonth() === month && selectedDate.getDate() === d;
+  }
+  function isToday(d){
+    return today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+  }
+  function selectDay(d){
+    if (isDisabled(d)) return;
+    onChange(formatDateStr(new Date(year, month, d)));
+    setOpen(false);
+  }
+
+  const nextMonthDisabled = maxDate && year === maxDate.getFullYear() && month === maxDate.getMonth();
+  const monthLabel = viewMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  return (
+    <React.Fragment>
+      <button type="button" className="datepicker-trigger" onClick={() => setOpen(true)}>
+        <Icon name="calendar" />
+        <span className={value ? '' : 'dp-placeholder'}>{value ? formatDisplayDate(value) : 'Select date'}</span>
+      </button>
+
+      {open && (
+        <React.Fragment>
+          <div className="datepicker-backdrop" onClick={() => setOpen(false)}></div>
+          <div className="datepicker-popup">
+            <div className="datepicker-header">
+              <button type="button" onClick={() => setViewMonth(new Date(year, month - 1, 1))} aria-label="Previous month">
+                <Icon name="chevronRight" style={{ transform: 'rotate(180deg)' }} />
+              </button>
+              <span>{monthLabel}</span>
+              <button type="button" onClick={() => setViewMonth(new Date(year, month + 1, 1))} disabled={nextMonthDisabled} aria-label="Next month">
+                <Icon name="chevronRight" />
+              </button>
+            </div>
+            <div className="datepicker-weekdays">
+              {['S','M','T','W','T','F','S'].map((w, i) => <span key={i}>{w}</span>)}
+            </div>
+            <div className="datepicker-grid">
+              {cells.map((d, i) => d === null ? <span key={i}></span> : (
+                <button
+                  type="button" key={i}
+                  className={"datepicker-day" + (isSelected(d) ? " selected" : "") + (isToday(d) && !isSelected(d) ? " today" : "")}
+                  disabled={isDisabled(d)}
+                  onClick={() => selectDay(d)}
+                >{d}</button>
+              ))}
+            </div>
+            <div className="datepicker-footer">
+              <button
+                type="button"
+                className="datepicker-today-btn"
+                onClick={() => { if (!maxDate || today <= maxDate) onChange(formatDateStr(today)); setOpen(false); }}
+              >Today</button>
+            </div>
+          </div>
+        </React.Fragment>
+      )}
+    </React.Fragment>
+  );
+}
+
+// ---------------- Representative Dashboard ----------------
+function SessionPicker({ open, studentName, session, currentStatus, onPick, onCancel }){
+  if (!open) return null;
+  const sessionLabel = session === 'morning' ? 'Morning' : 'Afternoon';
+  const options = [
+    { value: null, label: 'Present', color: 'var(--indigo)', tint: 'var(--indigo-tint)', line: 'var(--indigo-line)' },
+    { value: 'absent', label: 'Absent', color: 'var(--red)', tint: 'var(--red-tint)', line: 'var(--red-line)' },
+    { value: 'od', label: 'OD (On Duty)', color: 'var(--amber)', tint: 'var(--amber-tint)', line: 'var(--amber-line)' }
+  ];
+  return (
+    <div
+      style={{ position:'fixed', inset:0, background:'rgba(20,30,60,0.4)', zIndex:75, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}
+      onClick={onCancel}
+    >
+      <div
+        style={{
+          width:300, maxWidth:'100%', background:'#fff', borderRadius:20, padding:'20px 18px 16px',
+          boxShadow:'0 30px 60px -20px rgba(15,25,60,0.45)', animation:'popIn .2s cubic-bezier(.22,1,.36,1)'
+        }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:14.5, color:'var(--ink)', marginBottom:2, textAlign:'center' }}>
+          {sessionLabel} · {studentName}
+        </div>
+        <div style={{ fontSize:11.5, color:'var(--ink-soft)', textAlign:'center', marginBottom:16 }}>Choose a status</div>
+        <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+          {options.map(opt => {
+            const active = currentStatus === opt.value;
+            return (
+              <button
+                key={opt.label}
+                onClick={() => onPick(opt.value)}
+                style={{
+                  display:'flex', alignItems:'center', justifyContent:'space-between',
+                  border: `1.5px solid ${active ? opt.color : 'var(--line)'}`,
+                  background: active ? opt.tint : '#FBFCFF',
+                  borderRadius:12, padding:'11px 14px', cursor:'pointer',
+                  fontFamily:'Inter, sans-serif', fontSize:13.5, fontWeight:600, color:'var(--ink)'
+                }}
+              >
+                {opt.label}
+                {active && <Icon name="check" style={{ width:15, height:15, color:opt.color }} />}
+              </button>
+            );
+          })}
+        </div>
+        <button
+          onClick={onCancel}
+          style={{ width:'100%', marginTop:14, background:'transparent', border:'none', color:'var(--ink-soft)', fontSize:12.5, cursor:'pointer', padding:8 }}
+        >Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+function SessionStudentTile({ student, record, index, onMarkSession }){
+  const [pickerSession, setPickerSession] = useState(null); // 'morning' | 'afternoon' | null
+
+  const morningStatus = record ? record.morning_status : null;
+  const afternoonStatus = record ? record.afternoon_status : null;
+
+  const pillColors = (status) => {
+    if (status === 'absent') return { bg:'var(--red-tint)', fg:'var(--red)', line:'var(--red-line)' };
+    if (status === 'od') return { bg:'var(--amber-tint)', fg:'var(--amber)', line:'var(--amber-line)' };
+    return { bg:'var(--indigo-tint)', fg:'var(--indigo-deep)', line:'var(--indigo-line)' };
+  };
+  const pillLabel = (status) => status === 'absent' ? 'Absent' : status === 'od' ? 'OD' : 'Present';
+
+  const tileTone = (morningStatus === 'absent' || afternoonStatus === 'absent')
+    ? 'red'
+    : (morningStatus === 'od' || afternoonStatus === 'od') ? 'amber' : null;
+  const bg = tileTone === 'red' ? 'var(--red-tint)' : tileTone === 'amber' ? 'var(--amber-tint)' : '#fff';
+  const border = tileTone === 'red' ? 'var(--red-line)' : tileTone === 'amber' ? 'var(--amber-line)' : 'var(--line)';
+  const avatarBg = tileTone === 'red'
+    ? 'linear-gradient(135deg, var(--red), #C43B48)'
+    : tileTone === 'amber'
+      ? 'linear-gradient(135deg, var(--amber), #B96F16)'
+      : 'linear-gradient(135deg, var(--indigo), var(--indigo-deep))';
+
+  const morningColors = pillColors(morningStatus);
+  const afternoonColors = pillColors(afternoonStatus);
+
+  return (
+    <React.Fragment>
+      <div style={{
+        position:'relative', background: bg, border: `1px solid ${border}`, borderRadius:16,
+        boxShadow:'var(--shadow-glass)', padding:'14px 12px 12px', userSelect:'none',
+        opacity:0, animation:'fadeUp .35s cubic-bezier(.22,1,.36,1) forwards', animationDelay:(index*0.02)+'s'
+      }}>
+        <div style={{ width:34, height:34, borderRadius:'50%', background:avatarBg, color:'#fff', fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:12.5, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:9 }}>
+          {initials(student.name)}
+        </div>
+        <div style={{ fontSize:13.5, fontWeight:600, lineHeight:1.25, marginBottom:2 }}>{student.name}</div>
+        <div style={{ fontSize:10.5, color:'var(--ink-soft)', marginBottom:10 }}>Roll {student.roll_no}</div>
+
+        <div style={{ display:'flex', gap:6 }}>
+          <button
+            type="button"
+            onClick={() => setPickerSession('morning')}
+            style={{
+              flex:1, borderRadius:9, padding:'6px 4px', cursor:'pointer', textAlign:'center',
+              background: morningColors.bg, color: morningColors.fg, border:`1px solid ${morningColors.line}`,
+              fontFamily:'Inter, sans-serif'
+            }}
+          >
+            <div style={{ fontSize:8.5, fontWeight:700, opacity:.75, marginBottom:1 }}>AM</div>
+            <div style={{ fontSize:10, fontWeight:700 }}>{pillLabel(morningStatus)}</div>
+          </button>
+          <button
+            type="button"
+            onClick={() => setPickerSession('afternoon')}
+            style={{
+              flex:1, borderRadius:9, padding:'6px 4px', cursor:'pointer', textAlign:'center',
+              background: afternoonColors.bg, color: afternoonColors.fg, border:`1px solid ${afternoonColors.line}`,
+              fontFamily:'Inter, sans-serif'
+            }}
+          >
+            <div style={{ fontSize:8.5, fontWeight:700, opacity:.75, marginBottom:1 }}>PM</div>
+            <div style={{ fontSize:10, fontWeight:700 }}>{pillLabel(afternoonStatus)}</div>
+          </button>
+        </div>
+      </div>
+
+      <SessionPicker
+        open={!!pickerSession}
+        studentName={student.name}
+        session={pickerSession}
+        currentStatus={pickerSession === 'morning' ? morningStatus : afternoonStatus}
+        onPick={(value) => { onMarkSession(student, pickerSession, value); setPickerSession(null); }}
+        onCancel={() => setPickerSession(null)}
+      />
+    </React.Fragment>
+  );
+}
+
+function SessionListBlock({ title, absentList, odList }){
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:13, color:'var(--ink)', marginBottom:10 }}>{title}</div>
+      <div className="section-head" style={{ marginTop:0 }}>
+        <h2 style={{ fontSize:12.5 }}>Absent <span className="count red">{absentList.length}</span></h2>
+      </div>
+      {absentList.length === 0 ? (
+        <div style={{ fontSize:12, color:'var(--ink-soft)', marginBottom:12 }}>None.</div>
+      ) : (
+        <div style={{ display:'flex', flexDirection:'column', gap:7, marginBottom:12 }}>
+          {absentList.map(a => (
+            <div key={a.id + '-abs'} style={{ background:'var(--red-tint)', border:'1px solid var(--red-line)', borderRadius:12, padding:'9px 12px' }}>
+              <div style={{ fontSize:12.5, fontWeight:600 }}>{a.name}</div>
+              <div style={{ fontSize:10, color:'#A5606A' }}>Roll {a.roll_no}</div>
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="section-head">
+        <h2 style={{ fontSize:12.5 }}>OD <span className="count amber">{odList.length}</span></h2>
+      </div>
+      {odList.length === 0 ? (
+        <div style={{ fontSize:12, color:'var(--ink-soft)' }}>None.</div>
+      ) : (
+        <div style={{ display:'flex', flexDirection:'column', gap:7 }}>
+          {odList.map(a => (
+            <div key={a.id + '-od'} style={{ background:'var(--amber-tint)', border:'1px solid var(--amber-line)', borderRadius:12, padding:'9px 12px' }}>
+              <div style={{ fontSize:12.5, fontWeight:600 }}>{a.name}</div>
+              <div style={{ fontSize:10, color:'#8A5A14' }}>Roll {a.roll_no}</div>
+            </div>
+          ))}
+        </div>
+>>>>>>> 5384879 (Update project)
       )}
     </div>
   );
 }
 
+<<<<<<< HEAD
 function AbsentRow({ entry, index, onRemove }){
   const [leaving, setLeaving] = useState(false);
   const handleClick = () => {
@@ -1198,6 +1833,168 @@ function App(){
     }
     setSharingPDF(false);
   }
+=======
+function RepresentativeDashboard({ toast }){
+  const { date, day } = useMemo(todayInfo, []);
+  const [tab, setTab] = useState('mark');
+  const [students, setStudents] = useState([]);
+  const [records, setRecords] = useState([]); // today's attendance records
+  const [loading, setLoading] = useState(true);
+  const [addOpen, setAddOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [roll, setRoll] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [sharingImg, setSharingImg] = useState(false);
+  const [sharingTxt, setSharingTxt] = useState(false);
+  const [shareFilter, setShareFilter] = useState('both'); // 'both' | 'morning' | 'afternoon'
+  const [todayHoliday, setTodayHoliday] = useState(null);
+
+  const [prevDate, setPrevDate] = useState(date);
+  const [prevRecords, setPrevRecords] = useState([]);
+  const [prevLoading, setPrevLoading] = useState(false);
+
+  useEffect(() => { if (tab === 'previous') loadPrevRecords(prevDate); }, [tab, prevDate]);
+
+  async function loadPrevRecords(d){
+    setPrevLoading(true);
+    const { data, error } = await db.from('atrk_attendance').select('*').eq('date', d);
+    setPrevLoading(false);
+    if (error){ toast.fire('Could not load that date'); console.error(error); return; }
+    setPrevRecords(data || []);
+  }
+
+  async function handleDeleteStudent(student){
+    if (!window.confirm(`Remove ${student.name}? This also clears their attendance history.`)) return;
+    const { error } = await db.from('atrk_students').delete().eq('id', student.id);
+    if (error){ toast.fire('Could not delete student'); console.error(error); return; }
+    setStudents(prev => prev.filter(s => s.id !== student.id));
+    setRecords(prev => prev.filter(r => r.student_id !== student.id));
+    toast.fire(`${student.name} removed`);
+  }
+
+  useEffect(() => { loadAll(); }, []);
+
+  async function loadAll(){
+    setLoading(true);
+    const [s, a, h] = await Promise.all([
+      db.from('atrk_students').select('*').order('name', { ascending: true }),
+      db.from('atrk_attendance').select('*').eq('date', date),
+      db.from('atrk_holidays').select('*').eq('date', date)
+    ]);
+    setLoading(false);
+    if (s.error) console.error(s.error); else setStudents(s.data || []);
+    if (a.error) console.error(a.error); else setRecords(a.data || []);
+    if (h.error) console.error(h.error); else setTodayHoliday((h.data && h.data[0]) || null);
+  }
+
+  const recordMap = useMemo(() => {
+    const m = {};
+    records.forEach(r => { m[r.student_id] = r; });
+    return m;
+  }, [records]);
+
+  async function markSession(student, session, newStatus){
+    const existing = recordMap[student.id] || null;
+    let morning_status = existing ? existing.morning_status : null;
+    let afternoon_status = existing ? existing.afternoon_status : null;
+    let afternoon_manual = existing ? existing.afternoon_manual : false;
+
+    if (session === 'morning'){
+      morning_status = newStatus;
+      // Auto-fill: mirror Morning into Afternoon immediately, but only
+      // as long as Afternoon has never been edited by hand.
+      if (!afternoon_manual) afternoon_status = newStatus;
+    } else {
+      afternoon_status = newStatus;
+      afternoon_manual = true; // manual edits are never overwritten again
+    }
+
+    const payload = { student_id: student.id, name: student.name, roll_no: student.roll_no, date, day, morning_status, afternoon_status, afternoon_manual };
+
+    setRecords(prev => {
+      const without = prev.filter(r => r.student_id !== student.id);
+      return [...without, { id: existing ? existing.id : ('temp-' + student.id), ...payload }];
+    });
+
+    const { data, error } = await db.from('atrk_attendance')
+      .upsert([payload], { onConflict: 'student_id,date' })
+      .select();
+    if (error){ console.error(error); toast.fire('Could not update — try again'); loadAll(); return; }
+    if (data && data[0]) setRecords(prev => prev.map(r => r.student_id === student.id ? data[0] : r));
+  }
+
+  async function handleAddStudent(){
+    if (!name.trim() || !roll.trim()) return;
+    setSaving(true);
+    const { data, error } = await db.from('atrk_students').insert([{ name: name.trim(), roll_no: roll.trim() }]).select();
+    setSaving(false);
+    if (error){
+      if (error.code === '23505') toast.fire(`Roll number ${roll} already exists`);
+      else { toast.fire('Could not add student'); console.error(error); }
+      return;
+    }
+    if (data && data[0]) setStudents(prev => [...prev, data[0]].sort((a,b) => a.name.localeCompare(b.name)));
+    setName(''); setRoll(''); setAddOpen(false);
+    toast.fire(`${name} added`);
+  }
+
+  const morningAbsent = useMemo(
+    () => [...records].filter(r => r.morning_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [records]
+  );
+  const morningOd = useMemo(
+    () => [...records].filter(r => r.morning_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [records]
+  );
+  const afternoonAbsent = useMemo(
+    () => [...records].filter(r => r.afternoon_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [records]
+  );
+  const afternoonOd = useMemo(
+    () => [...records].filter(r => r.afternoon_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [records]
+  );
+
+  function sessionBlockLines(label, absent, od){
+    const lines = [label, `Absent (${absent.length})`];
+    if (absent.length === 0) lines.push('None');
+    else absent.forEach((a, i) => lines.push(`${String(i+1).padStart(2,'0')}. ${a.name} — Roll ${a.roll_no}`));
+    lines.push('', `OD (${od.length})`);
+    if (od.length === 0) lines.push('None');
+    else od.forEach((a, i) => lines.push(`${String(i+1).padStart(2,'0')}. ${a.name} — Roll ${a.roll_no}`));
+    return lines;
+  }
+
+  function buildReportText(){
+    const lines = ['ATTENDANCE REPORT', `${day}, ${date}`, ''];
+    if (shareFilter !== 'afternoon') lines.push(...sessionBlockLines('MORNING', morningAbsent, morningOd), '');
+    if (shareFilter !== 'morning') lines.push(...sessionBlockLines('AFTERNOON', afternoonAbsent, afternoonOd), '');
+    lines.push('Generated by Student Absentees Tracker');
+    return lines.join('\n');
+  }
+
+  async function handleShareText(){
+    setSharingTxt(true);
+    const text = buildReportText();
+    try{
+      if (navigator.share){
+        try{ await navigator.share({ title: 'Attendance Report', text }); toast.fire('Shared successfully'); }
+        catch(err){ if (err && err.name !== 'AbortError') await copyFallback(text); }
+      } else {
+        await copyFallback(text);
+      }
+    }catch(err){ console.error(err); toast.fire('Something went wrong'); }
+    setSharingTxt(false);
+  }
+  async function copyFallback(text){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      try{ await navigator.clipboard.writeText(text); toast.fire('Copied to clipboard'); return; }catch(e){}
+    }
+    const blob = new Blob([text], { type:'text/plain' });
+    downloadBlob(blob, `attendance-${date}.txt`);
+    toast.fire('Text file downloaded');
+  }
+>>>>>>> 5384879 (Update project)
   function downloadBlob(blob, fileName){
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1206,6 +2003,1836 @@ function App(){
     URL.revokeObjectURL(url);
   }
 
+<<<<<<< HEAD
+=======
+  async function handleShareImage(){
+    if (typeof html2canvas === 'undefined'){ toast.fire('Could not load image tool'); return; }
+    setSharingImg(true);
+    try{
+      const el = document.getElementById('repExportCard');
+      const naturalHeight = el.scrollHeight;
+      const MAX_CANVAS_HEIGHT = 6000;
+      const scale = Math.max(0.5, Math.min(2, MAX_CANVAS_HEIGHT / naturalHeight));
+      const canvas = await html2canvas(el, { backgroundColor:'#ffffff', scale, useCORS:true });
+      canvas.toBlob(async (blob) => {
+        if (!blob){ toast.fire('Could not create image'); setSharingImg(false); return; }
+        const fileName = `attendance-${date}.png`;
+        const file = new File([blob], fileName, { type:'image/png' });
+        if (navigator.canShare && navigator.canShare({ files:[file] })){
+          try{ await navigator.share({ files:[file], title:'Attendance Report' }); toast.fire('Shared successfully'); }
+          catch(err){ if (err && err.name !== 'AbortError'){ downloadBlob(blob, fileName); toast.fire('Image downloaded'); } }
+        } else {
+          downloadBlob(blob, fileName); toast.fire('Image downloaded');
+        }
+        setSharingImg(false);
+      }, 'image/png');
+    }catch(err){ console.error(err); toast.fire('Something went wrong'); setSharingImg(false); }
+  }
+
+  return (
+    <div className="content">
+      <div className="segmented">
+        <button className={tab === 'mark' ? 'active' : ''} onClick={() => setTab('mark')}>Mark</button>
+        <button className={tab === 'lists' ? 'active' : ''} onClick={() => setTab('lists')}>Today's Lists</button>
+        <button className={tab === 'previous' ? 'active' : ''} onClick={() => setTab('previous')}>Previous</button>
+        <button className={tab === 'manage' ? 'active' : ''} onClick={() => setTab('manage')}>Manage</button>
+      </div>
+
+      {tab === 'mark' && (
+        <div>
+          {todayHoliday ? (
+            <div className="card" style={{ textAlign:'center', padding:'32px 20px' }}>
+              <div className="glyph" style={{ marginBottom:12 }}><Icon name="calendar" /></div>
+              <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:16, marginBottom:6 }}>Today is a holiday</div>
+              <div style={{ fontSize:13, color:'var(--ink-soft)' }}>{todayHoliday.reason}</div>
+              <div style={{ fontSize:11.5, color:'var(--ink-faint)', marginTop:10 }}>Attendance marking is disabled for holidays</div>
+            </div>
+          ) : (
+            <React.Fragment>
+              <div className="section-head">
+                <h2>All Students <span className="count">{students.length}</span></h2>
+                <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => setAddOpen(v => !v)}>
+                  <Icon name="plus" /> Add
+                </button>
+              </div>
+
+              <div style={{ display:'flex', alignItems:'center', gap:8, background:'var(--indigo-tint)', border:'1px solid var(--indigo-line)', borderRadius:12, padding:'9px 12px', marginBottom:14, fontSize:11.5, color:'var(--indigo-deep)' }}>
+                Tap AM or PM on a student to set that session's status. Marking Morning auto-fills Afternoon to match — unless Afternoon has been edited by hand, which locks it from auto-fill for the day.
+              </div>
+
+              {addOpen && (
+                <div className="card">
+                  <div className="row-2">
+                    <div className="field">
+                      <label>Name</label>
+                      <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Aarav Mehta" />
+                    </div>
+                    <div className="field">
+                      <label>Roll no.</label>
+                      <input value={roll} onChange={e => setRoll(e.target.value)} placeholder="e.g. 24" />
+                    </div>
+                  </div>
+                  <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleAddStudent} disabled={saving}>
+                    {saving ? 'Saving…' : 'Save student'}
+                  </button>
+                </div>
+              )}
+
+              {loading ? <div className="spinner"></div> : students.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="cap" /></div>
+                  <p>No students yet</p>
+                </div>
+              ) : (
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+                  {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map((s, i) => (
+                    <SessionStudentTile key={s.id} student={s} record={recordMap[s.id]} index={i} onMarkSession={markSession} />
+              ))}
+            </div>
+          )}
+            </React.Fragment>
+          )}
+        </div>
+      )}
+
+      {tab === 'lists' && (
+        <div>
+          <div className="segmented" style={{ marginBottom:14 }}>
+            <button className={shareFilter === 'both' ? 'active' : ''} onClick={() => setShareFilter('both')}>Both</button>
+            <button className={shareFilter === 'morning' ? 'active' : ''} onClick={() => setShareFilter('morning')}>AM only</button>
+            <button className={shareFilter === 'afternoon' ? 'active' : ''} onClick={() => setShareFilter('afternoon')}>PM only</button>
+          </div>
+
+          <div id="repExportCard" style={{ background:'#fff', borderRadius:20, border:'1px solid var(--glass-border)', boxShadow:'var(--shadow-glass)', padding:18 }}>
+            <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:16 }}>Attendance Report</div>
+            <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:16 }}>{day}, {date}</div>
+
+            {shareFilter !== 'afternoon' && <SessionListBlock title="Morning" absentList={morningAbsent} odList={morningOd} />}
+            {shareFilter !== 'morning' && <SessionListBlock title="Afternoon" absentList={afternoonAbsent} odList={afternoonOd} />}
+          </div>
+
+          <button className="btn btn-primary" style={{ width:'100%', marginTop:14 }} onClick={handleShareImage} disabled={sharingImg}>
+            <Icon name="share" />{sharingImg ? 'Preparing image…' : 'Share as image'}
+          </button>
+          <button className="btn btn-outline" style={{ width:'100%', marginTop:10 }} onClick={handleShareText} disabled={sharingTxt}>
+            <Icon name="file" />{sharingTxt ? 'Preparing text…' : 'Share as text'}
+          </button>
+        </div>
+      )}
+
+      {tab === 'previous' && (
+        <div>
+          <div className="card">
+            <div className="field">
+              <label>Date</label>
+              <DatePicker value={prevDate} max={date} onChange={setPrevDate} />
+            </div>
+            <div style={{ fontSize:11.5, color:'var(--ink-soft)' }}>
+              View-only — past attendance can't be edited here. Ask an Admin if a past date needs correcting.
+            </div>
+          </div>
+
+          {prevLoading ? <div className="spinner"></div> : (
+            <React.Fragment>
+              <SessionListBlock
+                title="Morning"
+                absentList={[...prevRecords].filter(r => r.morning_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no))}
+                odList={[...prevRecords].filter(r => r.morning_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no))}
+              />
+              <SessionListBlock
+                title="Afternoon"
+                absentList={[...prevRecords].filter(r => r.afternoon_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no))}
+                odList={[...prevRecords].filter(r => r.afternoon_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no))}
+              />
+            </React.Fragment>
+          )}
+        </div>
+      )}
+
+      {tab === 'manage' && (
+        <div>
+          <div className="section-head">
+            <h2>All Students <span className="count">{students.length}</span></h2>
+            <div style={{ display:'flex', gap:8 }}>
+              <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsCSV(students)}>
+                <Icon name="download" /> CSV
+              </button>
+              <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsPDF(students)}>
+                <Icon name="download" /> PDF
+              </button>
+            </div>
+          </div>
+
+          {students.length === 0 ? (
+            <div className="empty-state">
+              <div className="glyph"><Icon name="cap" /></div>
+              <p>No students yet</p>
+            </div>
+          ) : (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+              {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map(s => (
+                <div key={s.id} className="card" style={{ padding:12, marginBottom:0, position:'relative' }}>
+                  <div style={{ fontSize:13.5, fontWeight:600, paddingRight:20 }}>{s.name}</div>
+                  <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:2 }}>Roll {s.roll_no}</div>
+                  <button
+                    onClick={() => handleDeleteStudent(s)}
+                    style={{ position:'absolute', top:10, right:10, border:'none', background:'transparent', color:'var(--ink-faint)', cursor:'pointer' }}
+                  >
+                    <Icon name="trash" style={{ width:14, height:14 }} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+function TeacherDashboard({ toast }){
+  const [tab, setTab] = useState('students');
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [addOpen, setAddOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [roll, setRoll] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  const { date: today, day: todayDay } = useMemo(todayInfo, []);
+  const [fromDate, setFromDate] = useState(today);
+  const [toDate, setToDate] = useState(today);
+  const [report, setReport] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+
+  const [markRecords, setMarkRecords] = useState([]);
+  const [markLoading, setMarkLoading] = useState(false);
+  const [todayHoliday, setTodayHoliday] = useState(null);
+
+  useEffect(() => { if (tab === 'mark') loadMarkRecords(); }, [tab]);
+
+  async function loadMarkRecords(){
+    setMarkLoading(true);
+    const [a, h] = await Promise.all([
+      db.from('atrk_attendance').select('*').eq('date', today),
+      db.from('atrk_holidays').select('*').eq('date', today)
+    ]);
+    setMarkLoading(false);
+    if (a.error){ toast.fire('Could not load attendance'); console.error(a.error); return; }
+    setMarkRecords(a.data || []);
+    if (h.error) console.error(h.error); else setTodayHoliday((h.data && h.data[0]) || null);
+  }
+
+  const markRecordMap = useMemo(() => {
+    const m = {};
+    markRecords.forEach(r => { m[r.student_id] = r; });
+    return m;
+  }, [markRecords]);
+
+  async function markSession(student, session, newStatus){
+    const existing = markRecordMap[student.id] || null;
+    let morning_status = existing ? existing.morning_status : null;
+    let afternoon_status = existing ? existing.afternoon_status : null;
+    let afternoon_manual = existing ? existing.afternoon_manual : false;
+
+    if (session === 'morning'){
+      morning_status = newStatus;
+      if (!afternoon_manual) afternoon_status = newStatus;
+    } else {
+      afternoon_status = newStatus;
+      afternoon_manual = true;
+    }
+
+    const payload = { student_id: student.id, name: student.name, roll_no: student.roll_no, date: today, day: todayDay, morning_status, afternoon_status, afternoon_manual };
+
+    setMarkRecords(prev => {
+      const without = prev.filter(r => r.student_id !== student.id);
+      return [...without, { id: existing ? existing.id : ('temp-' + student.id), ...payload }];
+    });
+
+    const { data, error } = await db.from('atrk_attendance')
+      .upsert([payload], { onConflict: 'student_id,date' })
+      .select();
+    if (error){ console.error(error); toast.fire('Could not update — try again'); loadMarkRecords(); return; }
+    if (data && data[0]) setMarkRecords(prev => prev.map(r => r.student_id === student.id ? data[0] : r));
+  }
+
+  useEffect(() => { loadStudents(); }, []);
+
+  async function loadStudents(){
+    setLoading(true);
+    const { data, error } = await db.from('atrk_students').select('*').order('name', { ascending: true });
+    setLoading(false);
+    if (error){ toast.fire('Could not load students'); console.error(error); return; }
+    setStudents(data || []);
+  }
+
+  async function handleAddStudent(){
+    if (!name.trim() || !roll.trim()) return;
+    setSaving(true);
+    const { data, error } = await db.from('atrk_students').insert([{ name: name.trim(), roll_no: roll.trim() }]).select();
+    setSaving(false);
+    if (error){
+      if (error.code === '23505') toast.fire(`Roll number ${roll} already exists`);
+      else { toast.fire('Could not add student'); console.error(error); }
+      return;
+    }
+    if (data && data[0]) setStudents(prev => [...prev, data[0]].sort((a,b) => a.name.localeCompare(b.name)));
+    setName(''); setRoll(''); setAddOpen(false);
+    toast.fire(`${name} added`);
+  }
+
+  async function handleDeleteStudent(student){
+    if (!window.confirm(`Remove ${student.name}? This also clears their attendance history.`)) return;
+    const { error } = await db.from('atrk_students').delete().eq('id', student.id);
+    if (error){ toast.fire('Could not delete student'); console.error(error); return; }
+    setStudents(prev => prev.filter(s => s.id !== student.id));
+    toast.fire(`${student.name} removed`);
+  }
+
+  async function handleGenerateReport(){
+    if (!fromDate || !toDate){ toast.fire('Pick both dates'); return; }
+    if (fromDate > toDate){ toast.fire('"From" date must be before "To" date'); return; }
+    setGenerating(true);
+    const [attRes, holRes] = await Promise.all([
+      db.from('atrk_attendance').select('*').gte('date', fromDate).lte('date', toDate),
+      db.from('atrk_holidays').select('date').gte('date', fromDate).lte('date', toDate)
+    ]);
+    setGenerating(false);
+    if (attRes.error){ toast.fire('Could not generate report'); console.error(attRes.error); return; }
+    if (holRes.error){ console.error(holRes.error); }
+
+    // Holidays are excluded entirely — neither counted as a session nor
+    // held against anyone, even if a record accidentally exists for one
+    // (e.g. marked before the holiday was declared).
+    const holidayDates = new Set((holRes.data || []).map(h => h.date));
+    const records = (attRes.data || []).filter(r => !holidayDates.has(r.date));
+    const sessionDates = [...new Set(records.map(r => r.date))];
+    // Each day = 2 half-day sessions (Morning + Afternoon), per the
+    // half-day attendance model.
+    const totalHalfDays = sessionDates.length * 2;
+
+    const rows = students.map(s => {
+      const mine = records.filter(r => r.student_id === s.id);
+      const absentHalf = mine.filter(r => r.morning_status === 'absent').length + mine.filter(r => r.afternoon_status === 'absent').length;
+      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf);
+      const percentage = totalHalfDays === 0 ? null : Math.round(((presentHalf + odHalf) / totalHalfDays) * 1000) / 10;
+      return {
+        ...s,
+        present: Math.round((presentHalf / 2) * 10) / 10,
+        absent: Math.round((absentHalf / 2) * 10) / 10,
+        od: Math.round((odHalf / 2) * 10) / 10,
+        percentage
+      };
+    }).sort((a,b) => rollCompare(a.roll_no, b.roll_no));
+
+    setReport({ fromDate, toDate, totalSessions: sessionDates.length, rows, holidaysExcluded: holidayDates.size });
+  }
+
+  async function handleDownloadPDF(){
+    if (!report) return;
+    if (typeof window.jspdf === 'undefined'){ toast.fire('Could not load PDF tool'); return; }
+    setPdfBusy(true);
+    try{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 40;
+      const bottomLimit = pageHeight - 56;
+      let y = 56;
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(19);
+      doc.setTextColor(27, 37, 64);
+      doc.text('Attendance Report', marginX, y);
+      y += 20;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+      doc.setTextColor(94, 107, 140);
+      doc.text(`${formatDisplayDate(report.fromDate)} – ${formatDisplayDate(report.toDate)}  ·  ${report.totalSessions} session${report.totalSessions === 1 ? '' : 's'}`, marginX, y);
+      y += 26;
+
+      const cols = [
+        { label: 'Name', w: 150, align: 'left' },
+        { label: 'Roll', w: 55, align: 'left' },
+        { label: 'Present', w: 60, align: 'center' },
+        { label: 'Absent', w: 60, align: 'center' },
+        { label: 'OD', w: 45, align: 'center' },
+        { label: '%', w: 55, align: 'center' }
+      ];
+      const tableWidth = cols.reduce((s,c) => s + c.w, 0);
+
+      function drawHeader(){
+        doc.setFillColor(27, 37, 64);
+        doc.rect(marginX, y, tableWidth, 26, 'F');
+        let x = marginX;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(255,255,255);
+        cols.forEach(c => {
+          doc.text(c.label, c.align === 'left' ? x + 8 : x + c.w/2, y + 17, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 26;
+      }
+
+      drawHeader();
+      report.rows.forEach((r, i) => {
+        if (y + 24 > bottomLimit){ doc.addPage(); y = 56; drawHeader(); }
+        if (i % 2 === 1){ doc.setFillColor(246, 248, 253); doc.rect(marginX, y, tableWidth, 24, 'F'); }
+        let x = marginX;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+        doc.setTextColor(27, 37, 64);
+        const cells = [r.name, r.roll_no, String(r.present), String(r.absent), String(r.od), r.percentage === null ? '—' : r.percentage + '%'];
+        cells.forEach((val, ci) => {
+          const c = cols[ci];
+          doc.text(String(val), c.align === 'left' ? x + 8 : x + c.w/2, y + 16, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 24;
+      });
+
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++){
+        doc.setPage(p);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(154, 166, 196);
+        doc.text('Generated by Student Absentees Tracker', marginX, pageHeight - 26);
+        doc.text(`Page ${p} of ${pageCount}`, pageWidth - marginX, pageHeight - 26, { align: 'right' });
+      }
+
+      doc.save(`attendance-report-${report.fromDate}-to-${report.toDate}.pdf`);
+      toast.fire('PDF downloaded');
+    }catch(err){
+      console.error(err); toast.fire('Something went wrong');
+    }
+    setPdfBusy(false);
+  }
+
+  function handleDownloadExcel(){
+    if (!report) return;
+    if (typeof XLSX === 'undefined'){ toast.fire('Could not load Excel tool'); return; }
+    const wsData = [
+      ['Name', 'Roll No', 'Present', 'Absent', 'OD', 'Percentage'],
+      ...report.rows.map(r => [r.name, r.roll_no, r.present, r.absent, r.od, r.percentage === null ? '' : r.percentage])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    ws['!cols'] = [{ wch: 22 }, { wch: 10 }, { wch: 9 }, { wch: 9 }, { wch: 6 }, { wch: 11 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Attendance Report');
+    XLSX.writeFile(wb, `attendance-report-${report.fromDate}-to-${report.toDate}.xlsx`);
+    toast.fire('Excel file downloaded');
+  }
+
+  return (
+    <div className="content">
+      <div className="segmented">
+        <button className={tab === 'mark' ? 'active' : ''} onClick={() => setTab('mark')}>Mark</button>
+        <button className={tab === 'students' ? 'active' : ''} onClick={() => setTab('students')}>Students</button>
+        <button className={tab === 'reports' ? 'active' : ''} onClick={() => setTab('reports')}>Reports</button>
+      </div>
+
+      {tab === 'mark' && (
+        <div>
+          {todayHoliday ? (
+            <div className="card" style={{ textAlign:'center', padding:'32px 20px' }}>
+              <div className="glyph" style={{ marginBottom:12 }}><Icon name="calendar" /></div>
+              <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:16, marginBottom:6 }}>Today is a holiday</div>
+              <div style={{ fontSize:13, color:'var(--ink-soft)' }}>{todayHoliday.reason}</div>
+              <div style={{ fontSize:11.5, color:'var(--ink-faint)', marginTop:10 }}>Attendance marking is disabled for holidays</div>
+            </div>
+          ) : (
+            <React.Fragment>
+              <div style={{ display:'flex', alignItems:'center', gap:8, background:'var(--indigo-tint)', border:'1px solid var(--indigo-line)', borderRadius:12, padding:'9px 12px', marginBottom:14, fontSize:11.5, color:'var(--indigo-deep)' }}>
+                Tap AM or PM on a student to set that session's status. Marking Morning auto-fills Afternoon unless it's been hand-edited. Today only — ask an Admin to correct a past date.
+              </div>
+
+              {markLoading ? <div className="spinner"></div> : students.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="cap" /></div>
+                  <p>No students yet</p>
+                </div>
+              ) : (
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+                  {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map((s, i) => (
+                    <SessionStudentTile
+                      key={s.id} student={s} record={markRecordMap[s.id]} index={i}
+                      onMarkSession={markSession}
+                    />
+                  ))}
+                </div>
+              )}
+            </React.Fragment>
+          )}
+        </div>
+      )}
+
+      {tab === 'students' && (
+        <div>
+          <div className="section-head">
+            <h2>All Students <span className="count">{students.length}</span></h2>
+            <div style={{ display:'flex', gap:8 }}>
+              <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsCSV(students)}>
+                <Icon name="download" /> CSV
+              </button>
+              <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsPDF(students)}>
+                <Icon name="download" /> PDF
+              </button>
+              <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => setAddOpen(v => !v)}>
+                <Icon name="plus" /> Add
+              </button>
+            </div>
+          </div>
+
+          {addOpen && (
+            <div className="card">
+              <div className="row-2">
+                <div className="field">
+                  <label>Name</label>
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Aarav Mehta" />
+                </div>
+                <div className="field">
+                  <label>Roll no.</label>
+                  <input value={roll} onChange={e => setRoll(e.target.value)} placeholder="e.g. 24" />
+                </div>
+              </div>
+              <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleAddStudent} disabled={saving}>
+                {saving ? 'Saving…' : 'Save student'}
+              </button>
+            </div>
+          )}
+
+          {loading ? <div className="spinner"></div> : students.length === 0 ? (
+            <div className="empty-state">
+              <div className="glyph"><Icon name="cap" /></div>
+              <p>No students yet</p>
+            </div>
+          ) : (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+              {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map(s => (
+                <div key={s.id} className="card" style={{ padding:12, marginBottom:0, position:'relative' }}>
+                  <div style={{ fontSize:13.5, fontWeight:600, paddingRight:20 }}>{s.name}</div>
+                  <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:2 }}>Roll {s.roll_no}</div>
+                  <button
+                    onClick={() => handleDeleteStudent(s)}
+                    style={{ position:'absolute', top:10, right:10, border:'none', background:'transparent', color:'var(--ink-faint)', cursor:'pointer' }}
+                  >
+                    <Icon name="trash" style={{ width:14, height:14 }} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === 'reports' && (
+        <div>
+          <div className="card">
+            <div className="row-2">
+              <div className="field">
+                <label>From date</label>
+                <DatePicker value={fromDate} onChange={setFromDate} />
+              </div>
+              <div className="field">
+                <label>To date</label>
+                <DatePicker value={toDate} onChange={setToDate} />
+              </div>
+            </div>
+            <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleGenerateReport} disabled={generating}>
+              <Icon name="calendar" />
+              {generating ? 'Generating…' : 'Generate report'}
+            </button>
+          </div>
+
+          {report && (
+            <div className="card">
+              <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:15.5, marginBottom:2 }}>Attendance Report</div>
+              <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:14 }}>
+                {formatDisplayDate(report.fromDate)} – {formatDisplayDate(report.toDate)} · {report.totalSessions} session{report.totalSessions === 1 ? '' : 's'}
+                {report.holidaysExcluded > 0 && ` · ${report.holidaysExcluded} holiday${report.holidaysExcluded === 1 ? '' : 's'} excluded`}
+              </div>
+
+              {report.rows.length === 0 ? (
+                <div className="empty-state"><p>No students to report on.</p></div>
+              ) : (
+                <div style={{ overflowX:'auto' }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                    <thead>
+                      <tr style={{ textAlign:'left', color:'var(--ink-soft)' }}>
+                        <th style={{ padding:'6px 8px' }}>Name</th>
+                        <th style={{ padding:'6px 8px' }}>Roll</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>P</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>A</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>OD</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.rows.map(r => (
+                        <tr key={r.id} style={{ borderTop:'1px solid var(--line)' }}>
+                          <td style={{ padding:'8px', fontWeight:600 }}>{r.name}</td>
+                          <td style={{ padding:'8px', color:'var(--ink-soft)' }}>{r.roll_no}</td>
+                          <td style={{ padding:'8px', textAlign:'center' }}>{r.present}</td>
+                          <td style={{ padding:'8px', textAlign:'center', color:'var(--red)' }}>{r.absent}</td>
+                          <td style={{ padding:'8px', textAlign:'center', color:'var(--amber)' }}>{r.od}</td>
+                          <td style={{ padding:'8px', textAlign:'center', fontWeight:600 }}>{r.percentage === null ? '—' : r.percentage + '%'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <button className="btn btn-outline" style={{ width:'100%', marginTop:14 }} onClick={handleDownloadPDF} disabled={pdfBusy}>
+                <Icon name="download" />
+                {pdfBusy ? 'Preparing PDF…' : 'Download PDF'}
+              </button>
+              <button className="btn btn-outline" style={{ width:'100%', marginTop:10 }} onClick={handleDownloadExcel}>
+                <Icon name="download" />
+                Download Excel
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+function AdminDashboard({ session, toast }){
+  const { date: today } = useMemo(todayInfo, []);
+  const [tab, setTab] = useState('users');
+  const [users, setUsers] = useState([]);
+  const [students, setStudents] = useState([]);
+  const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [addUserOpen, setAddUserOpen] = useState(false);
+  const [resetTarget, setResetTarget] = useState(null);
+  const [roleTarget, setRoleTarget] = useState(null);
+  const [holidays, setHolidays] = useState([]);
+  const [holidayDate, setHolidayDate] = useState('');
+  const [holidayReason, setHolidayReason] = useState('');
+  const [savingHoliday, setSavingHoliday] = useState(false);
+
+  const [markDate, setMarkDate] = useState(today);
+  const [markRecords, setMarkRecords] = useState([]);
+  const [markLoading, setMarkLoading] = useState(false);
+
+  const [addStudentOpen, setAddStudentOpen] = useState(false);
+  const [studentName, setStudentName] = useState('');
+  const [studentRoll, setStudentRoll] = useState('');
+  const [savingStudent, setSavingStudent] = useState(false);
+
+  const { day: today_day } = useMemo(todayInfo, []);
+  const [fromDate, setFromDate] = useState(today);
+  const [toDate, setToDate] = useState(today);
+  const [report, setReport] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+
+  const [todayRecords, setTodayRecords] = useState([]);
+  const [listsLoading, setListsLoading] = useState(false);
+  const [sharingImg, setSharingImg] = useState(false);
+  const [sharingTxt, setSharingTxt] = useState(false);
+  const [shareFilter, setShareFilter] = useState('both'); // 'both' | 'morning' | 'afternoon'
+
+  useEffect(() => { loadAll(); }, []);
+  useEffect(() => { if (tab === 'mark') loadMarkRecords(markDate); }, [tab, markDate]);
+  useEffect(() => { if (tab === 'lists') loadTodayRecords(); }, [tab]);
+
+  async function loadAll(){
+    setLoading(true);
+    const [u, s, a, h] = await Promise.all([
+      db.from('atrk_profiles').select('*').order('email', { ascending: true }),
+      db.from('atrk_students').select('*').order('name', { ascending: true }),
+      db.from('atrk_attendance').select('*').or('morning_status.not.is.null,afternoon_status.not.is.null').order('date', { ascending: false }).limit(200),
+      db.from('atrk_holidays').select('*').order('date', { ascending: true })
+    ]);
+    if (u.error) console.error(u.error); else setUsers(u.data || []);
+    if (s.error) console.error(s.error); else setStudents(s.data || []);
+    if (a.error) console.error(a.error); else setAttendance((a.data || []).filter(r => r.morning_status || r.afternoon_status));
+    if (h.error) console.error(h.error); else setHolidays(h.data || []);
+    setLoading(false);
+  }
+
+  async function loadMarkRecords(d){
+    setMarkLoading(true);
+    const { data, error } = await db.from('atrk_attendance').select('*').eq('date', d);
+    setMarkLoading(false);
+    if (error){ toast.fire('Could not load attendance for that date'); console.error(error); return; }
+    setMarkRecords(data || []);
+  }
+
+  const markRecordMap = useMemo(() => {
+    const m = {};
+    markRecords.forEach(r => { m[r.student_id] = r; });
+    return m;
+  }, [markRecords]);
+
+  async function markSession(student, session, newStatus){
+    const day = dayOfWeek(markDate);
+    const existing = markRecordMap[student.id] || null;
+    let morning_status = existing ? existing.morning_status : null;
+    let afternoon_status = existing ? existing.afternoon_status : null;
+    let afternoon_manual = existing ? existing.afternoon_manual : false;
+
+    if (session === 'morning'){
+      morning_status = newStatus;
+      if (!afternoon_manual) afternoon_status = newStatus;
+    } else {
+      afternoon_status = newStatus;
+      afternoon_manual = true;
+    }
+
+    const payload = { student_id: student.id, name: student.name, roll_no: student.roll_no, date: markDate, day, morning_status, afternoon_status, afternoon_manual };
+
+    setMarkRecords(prev => {
+      const without = prev.filter(r => r.student_id !== student.id);
+      return [...without, { id: existing ? existing.id : ('temp-' + student.id), ...payload }];
+    });
+
+    const { data, error } = await db.from('atrk_attendance')
+      .upsert([payload], { onConflict: 'student_id,date' })
+      .select();
+    if (error){ console.error(error); toast.fire('Could not update — try again'); loadMarkRecords(markDate); return; }
+    if (data && data[0]) setMarkRecords(prev => prev.map(r => r.student_id === student.id ? data[0] : r));
+  }
+
+  async function callUserFunction(payload){
+    const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify(payload)
+    });
+    const result = await resp.json();
+    if (!resp.ok) throw new Error(result.error || 'Request failed');
+    return result;
+  }
+
+  async function handleAddUser(email, password, role){
+    try{
+      await callUserFunction({ action: 'create', email, password, role });
+      toast.fire(`${email} added as ${roleLabel(role)}`);
+      setAddUserOpen(false);
+      loadAll();
+    }catch(err){
+      toast.fire(err.message);
+    }
+  }
+
+  async function handleDeleteUser(user){
+    if (!window.confirm(`Remove ${user.email}? They will no longer be able to sign in.`)) return;
+    try{
+      await callUserFunction({ action: 'delete', userId: user.id });
+      setUsers(prev => prev.filter(u => u.id !== user.id));
+      toast.fire(`${user.email} removed`);
+    }catch(err){
+      toast.fire(err.message);
+    }
+  }
+
+  async function handleResetPassword(user, newPassword){
+    try{
+      await callUserFunction({ action: 'reset_password', userId: user.id, newPassword });
+      toast.fire(`Password reset for ${user.email}`);
+      setResetTarget(null);
+    }catch(err){
+      toast.fire(err.message);
+    }
+  }
+
+  async function handleChangeRole(user, newRole){
+    if (user.id === session.user.id && newRole !== 'admin'){
+      toast.fire("You can't demote your own account");
+      return;
+    }
+    const { error } = await db.from('atrk_profiles').update({ role: newRole }).eq('id', user.id);
+    if (error){ toast.fire('Could not change role'); console.error(error); return; }
+    setUsers(prev => prev.map(u => u.id === user.id ? { ...u, role: newRole } : u));
+    toast.fire(`${user.email} is now ${roleLabel(newRole)}`);
+    setRoleTarget(null);
+  }
+
+  // ---------- Holidays ----------
+  async function handleAddHoliday(){
+    if (!holidayDate || !holidayReason.trim()) return;
+    setSavingHoliday(true);
+    const { data, error } = await db.from('atrk_holidays').insert([{ date: holidayDate, reason: holidayReason.trim() }]).select();
+    setSavingHoliday(false);
+    if (error){
+      if (error.code === '23505') toast.fire('A holiday is already declared for that date');
+      else { toast.fire('Could not add holiday'); console.error(error); }
+      return;
+    }
+    if (data && data[0]) setHolidays(prev => [...prev, data[0]].sort((a,b) => a.date.localeCompare(b.date)));
+    setHolidayDate(''); setHolidayReason('');
+    toast.fire('Holiday added');
+  }
+
+  async function handleDeleteHoliday(holiday){
+    if (!window.confirm(`Remove the holiday on ${formatDisplayDate(holiday.date)}?`)) return;
+    const { error } = await db.from('atrk_holidays').delete().eq('id', holiday.id);
+    if (error){ toast.fire('Could not remove holiday'); console.error(error); return; }
+    setHolidays(prev => prev.filter(h => h.id !== holiday.id));
+    toast.fire('Holiday removed');
+  }
+
+  // ---------- Students (add/delete) ----------
+  async function handleAddStudent(){
+    if (!studentName.trim() || !studentRoll.trim()) return;
+    setSavingStudent(true);
+    const { data, error } = await db.from('atrk_students').insert([{ name: studentName.trim(), roll_no: studentRoll.trim() }]).select();
+    setSavingStudent(false);
+    if (error){
+      if (error.code === '23505') toast.fire(`Roll number ${studentRoll} already exists`);
+      else { toast.fire('Could not add student'); console.error(error); }
+      return;
+    }
+    if (data && data[0]) setStudents(prev => [...prev, data[0]].sort((a,b) => a.name.localeCompare(b.name)));
+    toast.fire(`${studentName} added`);
+    setStudentName(''); setStudentRoll(''); setAddStudentOpen(false);
+  }
+
+  async function handleDeleteStudent(student){
+    if (!window.confirm(`Remove ${student.name}? This also clears their attendance history.`)) return;
+    const { error } = await db.from('atrk_students').delete().eq('id', student.id);
+    if (error){ toast.fire('Could not delete student'); console.error(error); return; }
+    setStudents(prev => prev.filter(s => s.id !== student.id));
+    toast.fire(`${student.name} removed`);
+  }
+
+  // ---------- Reports + PDF ----------
+  async function handleGenerateReport(){
+    if (!fromDate || !toDate){ toast.fire('Pick both dates'); return; }
+    if (fromDate > toDate){ toast.fire('"From" date must be before "To" date'); return; }
+    setGenerating(true);
+    const { data, error } = await db.from('atrk_attendance').select('*').gte('date', fromDate).lte('date', toDate);
+    setGenerating(false);
+    if (error){ toast.fire('Could not generate report'); console.error(error); return; }
+
+    // Holidays are excluded entirely — neither counted as a session nor
+    // held against anyone, even if a record accidentally exists for one
+    // (e.g. marked before the holiday was declared). Admin already has
+    // the full holidays list loaded, so just filter by range locally.
+    const holidayDates = new Set(
+      holidays.filter(h => h.date >= fromDate && h.date <= toDate).map(h => h.date)
+    );
+    const records = (data || []).filter(r => !holidayDates.has(r.date));
+    const sessionDates = [...new Set(records.map(r => r.date))];
+    const totalHalfDays = sessionDates.length * 2;
+
+    const rows = students.map(s => {
+      const mine = records.filter(r => r.student_id === s.id);
+      const absentHalf = mine.filter(r => r.morning_status === 'absent').length + mine.filter(r => r.afternoon_status === 'absent').length;
+      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf);
+      const percentage = totalHalfDays === 0 ? null : Math.round(((presentHalf + odHalf) / totalHalfDays) * 1000) / 10;
+      return {
+        ...s,
+        present: Math.round((presentHalf / 2) * 10) / 10,
+        absent: Math.round((absentHalf / 2) * 10) / 10,
+        od: Math.round((odHalf / 2) * 10) / 10,
+        percentage
+      };
+    }).sort((a,b) => rollCompare(a.roll_no, b.roll_no));
+
+    setReport({ fromDate, toDate, totalSessions: sessionDates.length, rows, holidaysExcluded: holidayDates.size });
+  }
+
+  async function handleDownloadPDF(){
+    if (!report) return;
+    if (typeof window.jspdf === 'undefined'){ toast.fire('Could not load PDF tool'); return; }
+    setPdfBusy(true);
+    try{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 40;
+      const bottomLimit = pageHeight - 56;
+      let y = 56;
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(19);
+      doc.setTextColor(27, 37, 64);
+      doc.text('Attendance Report', marginX, y);
+      y += 20;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+      doc.setTextColor(94, 107, 140);
+      doc.text(`${formatDisplayDate(report.fromDate)} – ${formatDisplayDate(report.toDate)}  ·  ${report.totalSessions} session${report.totalSessions === 1 ? '' : 's'}`, marginX, y);
+      y += 26;
+
+      const cols = [
+        { label: 'Name', w: 150, align: 'left' },
+        { label: 'Roll', w: 55, align: 'left' },
+        { label: 'Present', w: 60, align: 'center' },
+        { label: 'Absent', w: 60, align: 'center' },
+        { label: 'OD', w: 45, align: 'center' },
+        { label: '%', w: 55, align: 'center' }
+      ];
+      const tableWidth = cols.reduce((s,c) => s + c.w, 0);
+
+      function drawHeader(){
+        doc.setFillColor(27, 37, 64);
+        doc.rect(marginX, y, tableWidth, 26, 'F');
+        let x = marginX;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(255,255,255);
+        cols.forEach(c => {
+          doc.text(c.label, c.align === 'left' ? x + 8 : x + c.w/2, y + 17, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 26;
+      }
+
+      drawHeader();
+      report.rows.forEach((r, i) => {
+        if (y + 24 > bottomLimit){ doc.addPage(); y = 56; drawHeader(); }
+        if (i % 2 === 1){ doc.setFillColor(246, 248, 253); doc.rect(marginX, y, tableWidth, 24, 'F'); }
+        let x = marginX;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+        doc.setTextColor(27, 37, 64);
+        const cells = [r.name, r.roll_no, String(r.present), String(r.absent), String(r.od), r.percentage === null ? '—' : r.percentage + '%'];
+        cells.forEach((val, ci) => {
+          const c = cols[ci];
+          doc.text(String(val), c.align === 'left' ? x + 8 : x + c.w/2, y + 16, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 24;
+      });
+
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++){
+        doc.setPage(p);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(154, 166, 196);
+        doc.text('Generated by Student Absentees Tracker', marginX, pageHeight - 26);
+        doc.text(`Page ${p} of ${pageCount}`, pageWidth - marginX, pageHeight - 26, { align: 'right' });
+      }
+
+      doc.save(`attendance-report-${report.fromDate}-to-${report.toDate}.pdf`);
+      toast.fire('PDF downloaded');
+    }catch(err){
+      console.error(err); toast.fire('Something went wrong');
+    }
+    setPdfBusy(false);
+  }
+
+  function handleDownloadExcel(){
+    if (!report) return;
+    if (typeof XLSX === 'undefined'){ toast.fire('Could not load Excel tool'); return; }
+    const wsData = [
+      ['Name', 'Roll No', 'Present', 'Absent', 'OD', 'Percentage'],
+      ...report.rows.map(r => [r.name, r.roll_no, r.present, r.absent, r.od, r.percentage === null ? '' : r.percentage])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    ws['!cols'] = [{ wch: 22 }, { wch: 10 }, { wch: 9 }, { wch: 9 }, { wch: 6 }, { wch: 11 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Attendance Report');
+    XLSX.writeFile(wb, `attendance-report-${report.fromDate}-to-${report.toDate}.xlsx`);
+    toast.fire('Excel file downloaded');
+  }
+
+  // ---------- Today's Lists + Share ----------
+  async function loadTodayRecords(){
+    setListsLoading(true);
+    const { data, error } = await db.from('atrk_attendance').select('*').eq('date', today);
+    setListsLoading(false);
+    if (error){ toast.fire('Could not load today\'s attendance'); console.error(error); return; }
+    setTodayRecords(data || []);
+  }
+
+  const morningAbsent = useMemo(
+    () => [...todayRecords].filter(r => r.morning_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [todayRecords]
+  );
+  const morningOd = useMemo(
+    () => [...todayRecords].filter(r => r.morning_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [todayRecords]
+  );
+  const afternoonAbsent = useMemo(
+    () => [...todayRecords].filter(r => r.afternoon_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [todayRecords]
+  );
+  const afternoonOd = useMemo(
+    () => [...todayRecords].filter(r => r.afternoon_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
+    [todayRecords]
+  );
+
+  function sessionBlockLines(label, absent, od){
+    const lines = [label, `Absent (${absent.length})`];
+    if (absent.length === 0) lines.push('None');
+    else absent.forEach((a, i) => lines.push(`${String(i+1).padStart(2,'0')}. ${a.name} — Roll ${a.roll_no}`));
+    lines.push('', `OD (${od.length})`);
+    if (od.length === 0) lines.push('None');
+    else od.forEach((a, i) => lines.push(`${String(i+1).padStart(2,'0')}. ${a.name} — Roll ${a.roll_no}`));
+    return lines;
+  }
+
+  function buildReportText(){
+    const lines = ['ATTENDANCE REPORT', `${today_day}, ${today}`, ''];
+    if (shareFilter !== 'afternoon') lines.push(...sessionBlockLines('MORNING', morningAbsent, morningOd), '');
+    if (shareFilter !== 'morning') lines.push(...sessionBlockLines('AFTERNOON', afternoonAbsent, afternoonOd), '');
+    lines.push('Generated by Student Absentees Tracker');
+    return lines.join('\n');
+  }
+
+  function downloadBlob(blob, fileName){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fileName;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  async function copyFallback(text){
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      try{ await navigator.clipboard.writeText(text); toast.fire('Copied to clipboard'); return; }catch(e){}
+    }
+    const blob = new Blob([text], { type:'text/plain' });
+    downloadBlob(blob, `attendance-${today}.txt`);
+    toast.fire('Text file downloaded');
+  }
+
+  async function handleShareText(){
+    setSharingTxt(true);
+    const text = buildReportText();
+    try{
+      if (navigator.share){
+        try{ await navigator.share({ title: 'Attendance Report', text }); toast.fire('Shared successfully'); }
+        catch(err){ if (err && err.name !== 'AbortError') await copyFallback(text); }
+      } else {
+        await copyFallback(text);
+      }
+    }catch(err){ console.error(err); toast.fire('Something went wrong'); }
+    setSharingTxt(false);
+  }
+
+  async function handleShareImage(){
+    if (typeof html2canvas === 'undefined'){ toast.fire('Could not load image tool'); return; }
+    setSharingImg(true);
+    try{
+      const el = document.getElementById('adminExportCard');
+      const naturalHeight = el.scrollHeight;
+      const MAX_CANVAS_HEIGHT = 6000;
+      const scale = Math.max(0.5, Math.min(2, MAX_CANVAS_HEIGHT / naturalHeight));
+      const canvas = await html2canvas(el, { backgroundColor:'#ffffff', scale, useCORS:true });
+      canvas.toBlob(async (blob) => {
+        if (!blob){ toast.fire('Could not create image'); setSharingImg(false); return; }
+        const fileName = `attendance-${today}.png`;
+        const file = new File([blob], fileName, { type:'image/png' });
+        if (navigator.canShare && navigator.canShare({ files:[file] })){
+          try{ await navigator.share({ files:[file], title:'Attendance Report' }); toast.fire('Shared successfully'); }
+          catch(err){ if (err && err.name !== 'AbortError'){ downloadBlob(blob, fileName); toast.fire('Image downloaded'); } }
+        } else {
+          downloadBlob(blob, fileName); toast.fire('Image downloaded');
+        }
+        setSharingImg(false);
+      }, 'image/png');
+    }catch(err){ console.error(err); toast.fire('Something went wrong'); setSharingImg(false); }
+  }
+
+  return (
+    <div className="content">
+      <div className="segmented">
+        <button className={tab === 'mark' ? 'active' : ''} onClick={() => setTab('mark')}>Mark</button>
+        <button className={tab === 'students' ? 'active' : ''} onClick={() => setTab('students')}>Students</button>
+        <button className={tab === 'reports' ? 'active' : ''} onClick={() => setTab('reports')}>Reports</button>
+        <button className={tab === 'lists' ? 'active' : ''} onClick={() => setTab('lists')}>Lists</button>
+        <button className={tab === 'holidays' ? 'active' : ''} onClick={() => setTab('holidays')}>Holidays</button>
+        <button className={tab === 'users' ? 'active' : ''} onClick={() => setTab('users')}>Users</button>
+        <button className={tab === 'attendance' ? 'active' : ''} onClick={() => setTab('attendance')}>Log</button>
+      </div>
+
+      {loading ? <div className="spinner"></div> : (
+        <React.Fragment>
+          {tab === 'mark' && (
+            <div>
+              <div className="card">
+                <div className="field">
+                  <label>Date</label>
+                  <DatePicker value={markDate} max={today} onChange={setMarkDate} />
+                </div>
+                <div style={{ fontSize:11.5, color:'var(--ink-soft)' }}>
+                  Tap AM or PM on a student to set that session's status. Marking Morning auto-fills Afternoon unless it's been hand-edited. As Admin, you can mark any past date — Representatives and Teachers can only mark today.
+                </div>
+              </div>
+
+              {(() => {
+                const markDateHoliday = holidays.find(h => h.date === markDate);
+                if (markDateHoliday){
+                  return (
+                    <div className="card" style={{ textAlign:'center', padding:'32px 20px' }}>
+                      <div className="glyph" style={{ marginBottom:12 }}><Icon name="calendar" /></div>
+                      <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:16, marginBottom:6 }}>{formatDisplayDate(markDate)} is a holiday</div>
+                      <div style={{ fontSize:13, color:'var(--ink-soft)' }}>{markDateHoliday.reason}</div>
+                      <div style={{ fontSize:11.5, color:'var(--ink-faint)', marginTop:10 }}>Attendance marking is disabled for holidays</div>
+                    </div>
+                  );
+                }
+                if (markLoading) return <div className="spinner"></div>;
+                if (students.length === 0){
+                  return (
+                    <div className="empty-state">
+                      <div className="glyph"><Icon name="cap" /></div>
+                      <p>No students yet</p>
+                    </div>
+                  );
+                }
+                return (
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+                    {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map((s, i) => (
+                      <SessionStudentTile
+                        key={s.id} student={s} record={markRecordMap[s.id]} index={i}
+                        onMarkSession={markSession}
+                      />
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {tab === 'users' && (
+            <div>
+              <div className="section-head">
+                <h2>All Users <span className="count">{users.length}</span></h2>
+                <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => setAddUserOpen(true)}>
+                  <Icon name="plus" /> Add
+                </button>
+              </div>
+              {users.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="users" /></div>
+                  <p>No users yet</p>
+                </div>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                  {users.map(u => (
+                    <div key={u.id} className="card" style={{ padding:14, marginBottom:0, display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:14, fontWeight:600, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{u.email}</div>
+                        <button
+                          className="count"
+                          style={{ marginTop:4, display:'inline-flex', alignItems:'center', gap:4, border:'none', cursor:'pointer' }}
+                          onClick={() => setRoleTarget(u)}
+                        >
+                          {roleLabel(u.role)}
+                          <Icon name="chevronRight" style={{ width:10, height:10, transform:'rotate(90deg)' }} />
+                        </button>
+                      </div>
+                      <button className="btn btn-outline" style={{ padding:'8px 10px', fontSize:11.5 }} onClick={() => setResetTarget(u)}>
+                        <Icon name="lock" style={{ width:13, height:13 }} />
+                      </button>
+                      {u.id !== session.user.id && (
+                        <button className="btn btn-danger-outline" onClick={() => handleDeleteUser(u)}>
+                          <Icon name="trash" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'students' && (
+            <div>
+              <div className="section-head">
+                <h2>All Students <span className="count">{students.length}</span></h2>
+                <div style={{ display:'flex', gap:8 }}>
+                  <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsCSV(students)}>
+                    <Icon name="download" /> CSV
+                  </button>
+                  <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => exportStudentsPDF(students)}>
+                    <Icon name="download" /> PDF
+                  </button>
+                  <button className="btn btn-outline" style={{ padding:'7px 12px', fontSize:12.5 }} onClick={() => setAddStudentOpen(v => !v)}>
+                    <Icon name="plus" /> Add
+                  </button>
+                </div>
+              </div>
+
+              {addStudentOpen && (
+                <div className="card">
+                  <div className="row-2">
+                    <div className="field">
+                      <label>Name</label>
+                      <input value={studentName} onChange={e => setStudentName(e.target.value)} placeholder="e.g. Aarav Mehta" />
+                    </div>
+                    <div className="field">
+                      <label>Roll no.</label>
+                      <input value={studentRoll} onChange={e => setStudentRoll(e.target.value)} placeholder="e.g. 24" />
+                    </div>
+                  </div>
+                  <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleAddStudent} disabled={savingStudent}>
+                    {savingStudent ? 'Saving…' : 'Save student'}
+                  </button>
+                </div>
+              )}
+
+              {students.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="cap" /></div>
+                  <p>No students yet</p>
+                </div>
+              ) : (
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:10 }}>
+                  {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map(s => (
+                    <div key={s.id} className="card" style={{ padding:12, marginBottom:0, position:'relative' }}>
+                      <div style={{ fontSize:13.5, fontWeight:600, paddingRight:20 }}>{s.name}</div>
+                      <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:2 }}>Roll {s.roll_no}</div>
+                      <button
+                        onClick={() => handleDeleteStudent(s)}
+                        style={{ position:'absolute', top:10, right:10, border:'none', background:'transparent', color:'var(--ink-faint)', cursor:'pointer' }}
+                      >
+                        <Icon name="trash" style={{ width:14, height:14 }} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'reports' && (
+            <div>
+              <div className="card">
+                <div className="row-2">
+                  <div className="field">
+                    <label>From date</label>
+                    <DatePicker value={fromDate} onChange={setFromDate} />
+                  </div>
+                  <div className="field">
+                    <label>To date</label>
+                    <DatePicker value={toDate} onChange={setToDate} />
+                  </div>
+                </div>
+                <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleGenerateReport} disabled={generating}>
+                  <Icon name="calendar" />
+                  {generating ? 'Generating…' : 'Generate report'}
+                </button>
+              </div>
+
+              {report && (
+                <div className="card">
+                  <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:15.5, marginBottom:2 }}>Attendance Report</div>
+                  <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:14 }}>
+                    {formatDisplayDate(report.fromDate)} – {formatDisplayDate(report.toDate)} · {report.totalSessions} session{report.totalSessions === 1 ? '' : 's'}
+                {report.holidaysExcluded > 0 && ` · ${report.holidaysExcluded} holiday${report.holidaysExcluded === 1 ? '' : 's'} excluded`}
+                  </div>
+
+                  {report.rows.length === 0 ? (
+                    <div className="empty-state"><p>No students to report on.</p></div>
+                  ) : (
+                    <div style={{ overflowX:'auto' }}>
+                      <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                        <thead>
+                          <tr style={{ textAlign:'left', color:'var(--ink-soft)' }}>
+                            <th style={{ padding:'6px 8px' }}>Name</th>
+                            <th style={{ padding:'6px 8px' }}>Roll</th>
+                            <th style={{ padding:'6px 8px', textAlign:'center' }}>P</th>
+                            <th style={{ padding:'6px 8px', textAlign:'center' }}>A</th>
+                            <th style={{ padding:'6px 8px', textAlign:'center' }}>OD</th>
+                            <th style={{ padding:'6px 8px', textAlign:'center' }}>%</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {report.rows.map(r => (
+                            <tr key={r.id} style={{ borderTop:'1px solid var(--line)' }}>
+                              <td style={{ padding:'8px', fontWeight:600 }}>{r.name}</td>
+                              <td style={{ padding:'8px', color:'var(--ink-soft)' }}>{r.roll_no}</td>
+                              <td style={{ padding:'8px', textAlign:'center' }}>{r.present}</td>
+                              <td style={{ padding:'8px', textAlign:'center', color:'var(--red)' }}>{r.absent}</td>
+                              <td style={{ padding:'8px', textAlign:'center', color:'var(--amber)' }}>{r.od}</td>
+                              <td style={{ padding:'8px', textAlign:'center', fontWeight:600 }}>{r.percentage === null ? '—' : r.percentage + '%'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+
+                  <button className="btn btn-outline" style={{ width:'100%', marginTop:14 }} onClick={handleDownloadPDF} disabled={pdfBusy}>
+                    <Icon name="download" />
+                    {pdfBusy ? 'Preparing PDF…' : 'Download PDF'}
+                  </button>
+                  <button className="btn btn-outline" style={{ width:'100%', marginTop:10 }} onClick={handleDownloadExcel}>
+                    <Icon name="download" />
+                    Download Excel
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'lists' && (
+            <div>
+              <div className="segmented" style={{ marginBottom:14 }}>
+                <button className={shareFilter === 'both' ? 'active' : ''} onClick={() => setShareFilter('both')}>Both</button>
+                <button className={shareFilter === 'morning' ? 'active' : ''} onClick={() => setShareFilter('morning')}>AM only</button>
+                <button className={shareFilter === 'afternoon' ? 'active' : ''} onClick={() => setShareFilter('afternoon')}>PM only</button>
+              </div>
+
+              <div id="adminExportCard" style={{ background:'#fff', borderRadius:20, border:'1px solid var(--glass-border)', boxShadow:'var(--shadow-glass)', padding:18 }}>
+                <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:16 }}>Attendance Report</div>
+                <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:16 }}>{today_day}, {today}</div>
+
+                {listsLoading ? <div className="spinner"></div> : (
+                  <React.Fragment>
+                    {shareFilter !== 'afternoon' && <SessionListBlock title="Morning" absentList={morningAbsent} odList={morningOd} />}
+                    {shareFilter !== 'morning' && <SessionListBlock title="Afternoon" absentList={afternoonAbsent} odList={afternoonOd} />}
+                  </React.Fragment>
+                )}
+              </div>
+
+              <button className="btn btn-primary" style={{ width:'100%', marginTop:14 }} onClick={handleShareImage} disabled={sharingImg}>
+                <Icon name="share" />{sharingImg ? 'Preparing image…' : 'Share as image'}
+              </button>
+              <button className="btn btn-outline" style={{ width:'100%', marginTop:10 }} onClick={handleShareText} disabled={sharingTxt}>
+                <Icon name="file" />{sharingTxt ? 'Preparing text…' : 'Share as text'}
+              </button>
+            </div>
+          )}
+
+          {tab === 'holidays' && (
+            <div>
+              <div className="card">
+                <div className="row-2">
+                  <div className="field">
+                    <label>Date</label>
+                    <DatePicker value={holidayDate} onChange={setHolidayDate} />
+                  </div>
+                  <div className="field">
+                    <label>Reason</label>
+                    <input value={holidayReason} onChange={e => setHolidayReason(e.target.value)} placeholder="e.g. Founder's Day" />
+                  </div>
+                </div>
+                <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleAddHoliday} disabled={savingHoliday}>
+                  <Icon name="calendar" />
+                  {savingHoliday ? 'Saving…' : 'Declare holiday'}
+                </button>
+              </div>
+
+              <div className="section-head"><h2>Declared Holidays <span className="count">{holidays.length}</span></h2></div>
+              {holidays.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="calendar" /></div>
+                  <p>No holidays declared yet</p>
+                  <span>Holidays are excluded from attendance percentage</span>
+                </div>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                  {holidays.map(h => (
+                    <div key={h.id} className="card" style={{ padding:12, marginBottom:0, display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ flex:1, minWidth:0 }}>
+                        <div style={{ fontSize:13.5, fontWeight:600 }}>{formatDisplayDate(h.date)}</div>
+                        <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:2 }}>{h.reason}</div>
+                      </div>
+                      <button className="btn btn-danger-outline" onClick={() => handleDeleteHoliday(h)}>
+                        <Icon name="trash" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === 'attendance' && (
+            <div>
+              <div className="section-head"><h2>Recent Attendance <span className="count">{attendance.length}</span></h2></div>
+              {attendance.length === 0 ? (
+                <div className="empty-state">
+                  <div className="glyph"><Icon name="file" /></div>
+                  <p>No attendance records yet</p>
+                </div>
+              ) : (
+                <div style={{ display:'flex', flexDirection:'column', gap:8 }}>
+                  {attendance.map(a => {
+                    const tone = (a.morning_status === 'absent' || a.afternoon_status === 'absent') ? 'red'
+                      : (a.morning_status === 'od' || a.afternoon_status === 'od') ? 'amber' : null;
+                    const badge = (label, status) => {
+                      if (!status) return null;
+                      const isOd = status === 'od';
+                      return (
+                        <span className={"count " + (isOd ? 'amber' : 'red')} style={{ marginLeft:6 }}>
+                          {label} {isOd ? 'OD' : 'Absent'}
+                        </span>
+                      );
+                    };
+                    return (
+                      <div key={a.id} className="card" style={{
+                        padding:12, marginBottom:0, display:'flex', alignItems:'center', gap:10,
+                        background: tone === 'red' ? 'var(--red-tint)' : tone === 'amber' ? 'var(--amber-tint)' : '#fff',
+                        borderColor: tone === 'red' ? 'var(--red-line)' : tone === 'amber' ? 'var(--amber-line)' : 'var(--line)'
+                      }}>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ fontSize:13.5, fontWeight:600 }}>{a.name}</div>
+                          <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:2 }}>Roll {a.roll_no} · {formatDisplayDate(a.date)}</div>
+                        </div>
+                        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:4 }}>
+                          {badge('AM', a.morning_status)}
+                          {badge('PM', a.afternoon_status)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </React.Fragment>
+      )}
+
+      <AddUserSheet open={addUserOpen} onClose={() => setAddUserOpen(false)} onSave={handleAddUser} />
+      <ResetPasswordSheet user={resetTarget} onClose={() => setResetTarget(null)} onSave={handleResetPassword} />
+      <ChangeRoleSheet user={roleTarget} onClose={() => setRoleTarget(null)} onSave={handleChangeRole} />
+    </div>
+  );
+}
+
+function AddUserSheet({ open, onClose, onSave }){
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('representative');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (open){ setEmail(''); setPassword(''); setRole('representative'); } }, [open]);
+
+  if (!open) return null;
+
+  const handleSave = async () => {
+    if (!email.trim() || !password) return;
+    setSaving(true);
+    await onSave(email.trim(), password, role);
+    setSaving(false);
+  };
+
+  return (
+    <div style={{
+      position:'fixed', inset:0, background:'rgba(20,30,60,0.4)', zIndex:60,
+      display:'flex', alignItems:'flex-end', justifyContent:'center'
+    }} onClick={onClose}>
+      <div className="card" style={{ width:'100%', maxWidth:480, margin:0, borderRadius:'26px 26px 0 0', marginBottom:0 }} onClick={e => e.stopPropagation()}>
+        <h3 style={{ fontFamily:'Sora, sans-serif', fontSize:17, fontWeight:700, margin:'4px 0 16px' }}>Add user</h3>
+        <div className="field">
+          <label>Email</label>
+          <input type="email" placeholder="name@school.edu" value={email} onChange={e => setEmail(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>Password</label>
+          <input type="password" placeholder="At least 6 characters" value={password} onChange={e => setPassword(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>Role</label>
+          <select value={role} onChange={e => setRole(e.target.value)}>
+            <option value="representative">Representative</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div style={{ display:'flex', gap:10, marginTop:6 }}>
+          <button className="btn" style={{ flex:1, background:'#F1F4FC', color:'var(--ink-soft)', padding:12 }} onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" style={{ flex:1.4 }} onClick={handleSave} disabled={saving}>
+            {saving ? 'Saving…' : 'Create user'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ResetPasswordSheet({ user, onClose, onSave }){
+  const [newPassword, setNewPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { setNewPassword(''); }, [user]);
+
+  if (!user) return null;
+
+  const handleSave = async () => {
+    if (newPassword.length < 6) return;
+    setSaving(true);
+    await onSave(user, newPassword);
+    setSaving(false);
+  };
+
+  return (
+    <div style={{
+      position:'fixed', inset:0, background:'rgba(20,30,60,0.4)', zIndex:60,
+      display:'flex', alignItems:'flex-end', justifyContent:'center'
+    }} onClick={onClose}>
+      <div className="card" style={{ width:'100%', maxWidth:480, margin:0, borderRadius:'26px 26px 0 0', marginBottom:0 }} onClick={e => e.stopPropagation()}>
+        <h3 style={{ fontFamily:'Sora, sans-serif', fontSize:17, fontWeight:700, margin:'4px 0 4px' }}>Reset password</h3>
+        <p style={{ fontSize:12.5, color:'var(--ink-soft)', margin:'0 0 16px' }}>for {user.email}</p>
+        <div className="field">
+          <label>New password</label>
+          <input type="password" placeholder="At least 6 characters" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+        </div>
+        <div style={{ display:'flex', gap:10, marginTop:6 }}>
+          <button className="btn" style={{ flex:1, background:'#F1F4FC', color:'var(--ink-soft)', padding:12 }} onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" style={{ flex:1.4 }} onClick={handleSave} disabled={saving || newPassword.length < 6}>
+            {saving ? 'Saving…' : 'Reset password'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ChangeRoleSheet({ user, onClose, onSave }){
+  const [role, setRole] = useState('representative');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (user) setRole(user.role); }, [user]);
+
+  if (!user) return null;
+
+  const handleSave = async () => {
+    setSaving(true);
+    await onSave(user, role);
+    setSaving(false);
+  };
+
+  return (
+    <div style={{
+      position:'fixed', inset:0, background:'rgba(20,30,60,0.4)', zIndex:60,
+      display:'flex', alignItems:'flex-end', justifyContent:'center'
+    }} onClick={onClose}>
+      <div className="card" style={{ width:'100%', maxWidth:480, margin:0, borderRadius:'26px 26px 0 0', marginBottom:0 }} onClick={e => e.stopPropagation()}>
+        <h3 style={{ fontFamily:'Sora, sans-serif', fontSize:17, fontWeight:700, margin:'4px 0 4px' }}>Change role</h3>
+        <p style={{ fontSize:12.5, color:'var(--ink-soft)', margin:'0 0 16px' }}>for {user.email}</p>
+        <div className="field">
+          <label>Role</label>
+          <select value={role} onChange={e => setRole(e.target.value)}>
+            <option value="representative">Representative</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div style={{ display:'flex', gap:10, marginTop:6 }}>
+          <button className="btn" style={{ flex:1, background:'#F1F4FC', color:'var(--ink-soft)', padding:12 }} onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" style={{ flex:1.4 }} onClick={handleSave} disabled={saving || role === user.role}>
+            {saving ? 'Saving…' : 'Change role'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OwnPasswordSheet({ open, onClose, onSave }){
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => { if (open){ setNewPassword(''); setConfirmPassword(''); } }, [open]);
+
+  if (!open) return null;
+
+  const mismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
+  const canSave = newPassword.length >= 6 && newPassword === confirmPassword;
+
+  const handleSave = async () => {
+    if (!canSave) return;
+    setSaving(true);
+    await onSave(newPassword);
+    setSaving(false);
+  };
+
+  return (
+    <div style={{
+      position:'fixed', inset:0, background:'rgba(20,30,60,0.4)', zIndex:60,
+      display:'flex', alignItems:'flex-end', justifyContent:'center'
+    }} onClick={onClose}>
+      <div className="card" style={{ width:'100%', maxWidth:480, margin:0, borderRadius:'26px 26px 0 0', marginBottom:0 }} onClick={e => e.stopPropagation()}>
+        <h3 style={{ fontFamily:'Sora, sans-serif', fontSize:17, fontWeight:700, margin:'4px 0 16px' }}>Change your password</h3>
+        <div className="field">
+          <label>New password</label>
+          <input type="password" placeholder="At least 6 characters" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>Confirm new password</label>
+          <input type="password" placeholder="Re-enter password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+          {mismatch && <div style={{ fontSize:11.5, color:'var(--red)', marginTop:6 }}>Passwords don't match</div>}
+        </div>
+        <div style={{ display:'flex', gap:10, marginTop:6 }}>
+          <button className="btn" style={{ flex:1, background:'#F1F4FC', color:'var(--ink-soft)', padding:12 }} onClick={onClose}>Cancel</button>
+          <button className="btn btn-primary" style={{ flex:1.4 }} onClick={handleSave} disabled={saving || !canSave}>
+            {saving ? 'Saving…' : 'Change password'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+const LS_LOGIN_ATTEMPTS_KEY = 'atrk:login_attempts';
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_MS = 30000;
+
+function getLoginAttempts(){
+  try{
+    const raw = localStorage.getItem(LS_LOGIN_ATTEMPTS_KEY);
+    return raw ? JSON.parse(raw) : { count: 0, lockUntil: 0 };
+  }catch(e){ return { count: 0, lockUntil: 0 }; }
+}
+function setLoginAttempts(v){
+  try{ localStorage.setItem(LS_LOGIN_ATTEMPTS_KEY, JSON.stringify(v)); }catch(e){}
+}
+
+const ROLE_CARDS = [
+  { role: 'admin', label: 'Admin', icon: 'lock', desc: 'Full system access' },
+  { role: 'teacher', label: 'Teacher', icon: 'briefcase', desc: 'Students, reports & exports' },
+  { role: 'representative', label: 'Representative', icon: 'cap', desc: 'Daily attendance marking' }
+];
+
+function LoginScreen({ onLogin }){
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [lockRemaining, setLockRemaining] = useState(0);
+
+  useEffect(() => {
+    if (lockRemaining <= 0) return;
+    const t = setInterval(() => {
+      const { lockUntil } = getLoginAttempts();
+      const remaining = Math.max(0, Math.ceil((lockUntil - Date.now()) / 1000));
+      setLockRemaining(remaining);
+      if (remaining <= 0) clearInterval(t);
+    }, 1000);
+    return () => clearInterval(t);
+  }, [lockRemaining]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    const attempts = getLoginAttempts();
+    if (attempts.lockUntil > Date.now()){
+      setLockRemaining(Math.ceil((attempts.lockUntil - Date.now()) / 1000));
+      setError(`Too many failed attempts. Try again in ${Math.ceil((attempts.lockUntil - Date.now()) / 1000)}s.`);
+      return;
+    }
+
+    if (!email.trim() || !password){
+      setError('Enter both email and password.');
+      return;
+    }
+    if (!isConfigured){
+      setError('Supabase is not configured in this build.');
+      return;
+    }
+
+    setLoading(true);
+    const { data, error: authError } = await db.auth.signInWithPassword({
+      email: email.trim(), password
+    });
+
+    if (authError){
+      setLoading(false);
+      const next = { count: attempts.count + 1, lockUntil: 0 };
+      if (next.count >= MAX_LOGIN_ATTEMPTS){
+        next.lockUntil = Date.now() + LOCKOUT_MS;
+        setLockRemaining(Math.ceil(LOCKOUT_MS / 1000));
+        setError(`Too many failed attempts. Try again in ${Math.ceil(LOCKOUT_MS / 1000)}s.`);
+      } else {
+        setError(authError.message === 'Invalid login credentials'
+          ? 'Incorrect email or password.'
+          : authError.message);
+      }
+      setLoginAttempts(next);
+      return;
+    }
+
+    // Confirm this login actually belongs to the role card they picked —
+    // logging in as "Teacher" with an Admin account should be rejected
+    // here rather than silently landing them on the wrong dashboard.
+    const { data: profile, error: profileError } = await db
+      .from('atrk_profiles').select('role').eq('id', data.session.user.id).single();
+
+    setLoading(false);
+
+    if (profileError || !profile){
+      await db.auth.signOut();
+      setError('This account has no role assigned yet. Ask an admin to set one up.');
+      return;
+    }
+    if (profile.role !== selectedRole){
+      await db.auth.signOut();
+      setError(`This account is registered as ${roleLabel(profile.role)}, not ${roleLabel(selectedRole)}. Use the correct login card.`);
+      return;
+    }
+
+    setLoginAttempts({ count: 0, lockUntil: 0 });
+    onLogin(data.session);
+  };
+
+  if (!selectedRole){
+    return (
+      <div className="login-wrap">
+        <div className="login-card">
+          <div className="login-mark"><Icon name="cap" /></div>
+          <h1>Student Absentees Tracker</h1>
+          <p className="sub">Choose how you're signing in</p>
+
+          <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+            {ROLE_CARDS.map(rc => (
+              <button
+                key={rc.role}
+                onClick={() => { setSelectedRole(rc.role); setError(''); }}
+                style={{
+                  display:'flex', alignItems:'center', gap:12, textAlign:'left',
+                  border:'1.5px solid var(--line)', background:'#FBFCFF', borderRadius:16,
+                  padding:'14px 16px', cursor:'pointer', transition:'border-color .15s ease, background .15s ease'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--indigo)'; e.currentTarget.style.background = 'var(--indigo-tint)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.background = '#FBFCFF'; }}
+              >
+                <span style={{
+                  width:38, height:38, borderRadius:12, flex:'0 0 auto',
+                  background:'linear-gradient(135deg, var(--indigo), var(--indigo-deep))',
+                  color:'#fff', display:'flex', alignItems:'center', justifyContent:'center'
+                }}><Icon name={rc.icon} style={{ width:18, height:18 }} /></span>
+                <span style={{ flex:1 }}>
+                  <div style={{ fontWeight:700, fontSize:14.5 }}>{rc.label}</div>
+                </span>
+                <Icon name="chevronRight" style={{ width:16, height:16, color:'var(--ink-faint)' }} />
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const roleMeta = ROLE_CARDS.find(rc => rc.role === selectedRole);
+
+  return (
+    <div className="login-wrap">
+      <div className="login-card">
+        <div className="login-mark"><Icon name={roleMeta.icon} /></div>
+        <h1>{roleMeta.label} Login</h1>
+        <p className="sub">Sign in to continue</p>
+
+        {error && <div className="login-error">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label>Email</label>
+            <input
+              type="email" placeholder="you@school.edu" value={email}
+              onChange={e => setEmail(e.target.value)} autoComplete="username"
+            />
+          </div>
+          <div className="field">
+            <label>Password</label>
+            <input
+              type="password" placeholder="••••••••" value={password}
+              onChange={e => setPassword(e.target.value)} autoComplete="current-password"
+            />
+          </div>
+          <button className="btn btn-primary" type="submit" disabled={loading || lockRemaining > 0} style={{ width:'100%', marginTop:6 }}>
+            <Icon name="lock" />
+            {lockRemaining > 0 ? `Locked (${lockRemaining}s)` : loading ? 'Signing in…' : `Sign in as ${roleMeta.label}`}
+          </button>
+          <button
+            type="button"
+            onClick={() => { setSelectedRole(null); setError(''); setEmail(''); setPassword(''); }}
+            style={{ width:'100%', marginTop:10, background:'transparent', border:'none', color:'var(--ink-soft)', fontSize:12.5, cursor:'pointer', padding:8 }}
+          >
+            ← Choose a different login
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- App root ----------------
+function App(){
+  const [session, setSession] = useState(undefined); // undefined = checking, null = signed out
+  const [profile, setProfile] = useState(null);
+  const [profileError, setProfileError] = useState('');
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [changePwOpen, setChangePwOpen] = useState(false);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!isConfigured){ setSession(null); return; }
+    db.auth.getSession().then(({ data }) => setSession(data.session));
+    const { data: listener } = db.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session){ setProfile(null); return; }
+    setLoadingProfile(true);
+    setProfileError('');
+    db.from('atrk_profiles').select('*').eq('id', session.user.id).single()
+      .then(({ data, error }) => {
+        setLoadingProfile(false);
+        if (error || !data){
+          setProfileError('Your account has no role assigned yet. Ask an admin to set one up.');
+          return;
+        }
+        setProfile(data);
+      });
+  }, [session]);
+
+  const handleLogout = async () => {
+    if (isConfigured) await db.auth.signOut();
+    setSession(null);
+    setProfile(null);
+  };
+
+  const handleChangeOwnPassword = async (newPassword) => {
+    const { error } = await db.auth.updateUser({ password: newPassword });
+    if (error){ toast.fire(error.message); return; }
+    toast.fire('Password changed');
+    setChangePwOpen(false);
+  };
+
+  if (session === undefined){
+    return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}><div className="spinner"></div></div>;
+  }
+
+  if (!session){
+    return <LoginScreen onLogin={setSession} />;
+  }
+
+  if (loadingProfile){
+    return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}><div className="spinner"></div></div>;
+  }
+
+  if (profileError){
+    return (
+      <div className="login-wrap">
+        <div className="login-card">
+          <div className="login-mark"><Icon name="lock" /></div>
+          <h1>Access pending</h1>
+          <p className="sub">{profileError}</p>
+          <button className="btn btn-outline" style={{ width:'100%' }} onClick={handleLogout}>
+            <Icon name="logout" /> Sign out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile){
+    // Session just came in but the profile fetch hasn't started/finished
+    // yet (effects run after render) — show a spinner instead of crashing
+    // on profile.role during this one in-between render.
+    return <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}><div className="spinner"></div></div>;
+  }
+
+>>>>>>> 5384879 (Update project)
   return (
     <React.Fragment>
       <div className="topbar">
@@ -1214,6 +3841,7 @@ function App(){
             <span className="mark"><Icon name="cap" /></span>
             <div>
               <h1>Absentees Tracker</h1>
+<<<<<<< HEAD
               <div className="date-pill">{day.toUpperCase()} · {date}</div>
             </div>
           </div>
@@ -1379,11 +4007,33 @@ function App(){
         onSave={handleAddStudent}
         existingRolls={existingRolls}
       />
+=======
+              <span className="role-pill">{roleLabel(profile.role)}</span>
+            </div>
+          </div>
+          <div style={{ display:'flex', gap:8 }}>
+            <button className="icon-btn" onClick={() => setChangePwOpen(true)} aria-label="Change password">
+              <Icon name="lock" />
+            </button>
+            <button className="icon-btn" onClick={handleLogout} aria-label="Sign out">
+              <Icon name="logout" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <OwnPasswordSheet open={changePwOpen} onClose={() => setChangePwOpen(false)} onSave={handleChangeOwnPassword} />
+
+      {profile.role === 'admin' && <AdminDashboard session={session} toast={toast} />}
+      {profile.role === 'teacher' && <TeacherDashboard toast={toast} />}
+      {profile.role === 'representative' && <RepresentativeDashboard toast={toast} />}
+>>>>>>> 5384879 (Update project)
 
       <Toast msg={toast.msg} show={toast.show} />
     </React.Fragment>
   );
 }
+<<<<<<< HEAD
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 
@@ -1401,6 +4051,8 @@ if ('serviceWorker' in navigator) {
     window.location.reload();
   });
 }
+=======
+>>>>>>> 5384879 (Update project)
 </script>
 
 <script>
@@ -1412,9 +4064,27 @@ if ('serviceWorker' in navigator) {
     presets: [['react', { runtime: 'classic' }]]
   }).code;
   const __script = document.createElement('script');
+<<<<<<< HEAD
   __script.text = __out;
   document.body.appendChild(__script);
 </script>
 
+=======
+  __script.text = __out + '\nReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));';
+  document.body.appendChild(__script);
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+    let refreshed = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshed) return;
+      refreshed = true;
+      window.location.reload();
+    });
+  }
+</script>
+>>>>>>> 5384879 (Update project)
 </body>
 </html>
