@@ -1,11 +1,7 @@
 {
   "name": "Student Absentees Tracker",
   "short_name": "Absentees",
-<<<<<<< HEAD
-  "description": "Track daily student attendance and share the absentees list as an image.",
-=======
   "description": "Role-based attendance tracker for Admins, Teachers, and Representatives.",
->>>>>>> 5384879 (Update project)
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
