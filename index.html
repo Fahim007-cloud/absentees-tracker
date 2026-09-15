@@ -335,6 +335,7 @@ function roleLabel(role){
   if (role === 'representative') return 'Representative';
   return role;
 }
+const BULK_LABELS = { present: 'Present', absent: 'Absent', od: 'OD (On Duty)', unmark: 'Not Marked' };
 function exportStudentsCSV(students){
   const esc = (v) => `"${String(v).replace(/"/g, '""')}"`;
   const rows = [['Name', 'Roll No'], ...students.map(s => [s.name, s.roll_no])];
@@ -546,9 +547,10 @@ function SessionPicker({ open, studentName, session, currentStatus, onPick, onCa
   if (!open) return null;
   const sessionLabel = session === 'morning' ? 'Morning' : 'Afternoon';
   const options = [
-    { value: null, label: 'Present', color: 'var(--indigo)', tint: 'var(--indigo-tint)', line: 'var(--indigo-line)' },
+    { value: null, label: 'Present', color: 'var(--green)', tint: 'var(--green-tint)', line: 'var(--green-line)' },
     { value: 'absent', label: 'Absent', color: 'var(--red)', tint: 'var(--red-tint)', line: 'var(--red-line)' },
-    { value: 'od', label: 'OD (On Duty)', color: 'var(--amber)', tint: 'var(--amber-tint)', line: 'var(--amber-line)' }
+    { value: 'od', label: 'OD (On Duty)', color: 'var(--amber)', tint: 'var(--amber-tint)', line: 'var(--amber-line)' },
+    { value: 'unmarked', label: 'Not Marked', color: 'var(--ink-soft)', tint: '#F2F4FA', line: 'var(--line)' }
   ];
   return (
     <div
@@ -605,9 +607,10 @@ function SessionStudentTile({ student, record, index, onMarkSession }){
   const pillColors = (status) => {
     if (status === 'absent') return { bg:'var(--red-tint)', fg:'var(--red)', line:'var(--red-line)' };
     if (status === 'od') return { bg:'var(--amber-tint)', fg:'var(--amber)', line:'var(--amber-line)' };
-    return { bg:'var(--indigo-tint)', fg:'var(--indigo-deep)', line:'var(--indigo-line)' };
+    if (status === 'unmarked') return { bg:'#F2F4FA', fg:'var(--ink-soft)', line:'var(--line)' };
+    return { bg:'var(--green-tint)', fg:'var(--green)', line:'var(--green-line)' };
   };
-  const pillLabel = (status) => status === 'absent' ? 'Absent' : status === 'od' ? 'OD' : 'Present';
+  const pillLabel = (status) => status === 'absent' ? 'Absent' : status === 'od' ? 'OD' : status === 'unmarked' ? 'Not Marked' : 'Present';
 
   const tileTone = (morningStatus === 'absent' || afternoonStatus === 'absent')
     ? 'red'
@@ -733,6 +736,12 @@ function RepresentativeDashboard({ toast }){
   const [prevRecords, setPrevRecords] = useState([]);
   const [prevLoading, setPrevLoading] = useState(false);
 
+  const [fromDate, setFromDate] = useState(date);
+  const [toDate, setToDate] = useState(date);
+  const [report, setReport] = useState(null);
+  const [generating, setGenerating] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+
   useEffect(() => { if (tab === 'previous') loadPrevRecords(prevDate); }, [tab, prevDate]);
 
   async function loadPrevRecords(d){
@@ -818,6 +827,190 @@ function RepresentativeDashboard({ toast }){
     toast.fire(`${name} added`);
   }
 
+
+  async function handleGenerateReport(){
+    if (!fromDate || !toDate){ toast.fire('Pick both dates'); return; }
+    if (fromDate > toDate){ toast.fire('"From" date must be before "To" date'); return; }
+    setGenerating(true);
+    const [attRes, holRes] = await Promise.all([
+      db.from('atrk_attendance').select('*').gte('date', fromDate).lte('date', toDate),
+      db.from('atrk_holidays').select('date').gte('date', fromDate).lte('date', toDate)
+    ]);
+    setGenerating(false);
+    if (attRes.error){ toast.fire('Could not generate report'); console.error(attRes.error); return; }
+    if (holRes.error){ console.error(holRes.error); }
+
+    const holidayDates = new Set((holRes.data || []).map(h => h.date));
+    const recordsInRange = (attRes.data || []).filter(r => !holidayDates.has(r.date));
+    const sessionDates = [...new Set(recordsInRange.map(r => r.date))];
+    const totalHalfDays = sessionDates.length * 2;
+
+    const rows = students.map(s => {
+      const mine = recordsInRange.filter(r => r.student_id === s.id);
+      const absentHalf = mine.filter(r => r.morning_status === 'absent').length + mine.filter(r => r.afternoon_status === 'absent').length;
+      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;      const unmarkedHalf = mine.reduce((n, r) => n + (r.morning_status === 'unmarked' ? 1 : 0) + (r.afternoon_status === 'unmarked' ? 1 : 0), 0);
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf - unmarkedHalf);
+      const countedHalfDays = totalHalfDays - unmarkedHalf; // Not Marked half-days are excluded, like holidays
+      const percentage = countedHalfDays <= 0 ? null : Math.round(((presentHalf + odHalf) / countedHalfDays) * 1000) / 10;
+      return {
+        ...s,
+        present: Math.round((presentHalf / 2) * 10) / 10,
+        absent: Math.round((absentHalf / 2) * 10) / 10,
+        od: Math.round((odHalf / 2) * 10) / 10,
+        percentage
+      };
+    }).sort((a,b) => rollCompare(a.roll_no, b.roll_no));
+
+    setReport({ fromDate, toDate, totalSessions: sessionDates.length, rows, holidaysExcluded: holidayDates.size });
+  }
+
+  async function handleDownloadPDF(){
+    if (!report) return;
+    if (typeof window.jspdf === 'undefined'){ toast.fire('Could not load PDF tool'); return; }
+    setPdfBusy(true);
+    try{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const marginX = 40;
+      const bottomLimit = pageHeight - 56;
+      let y = 56;
+
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(19);
+      doc.setTextColor(27, 37, 64);
+      doc.text('Attendance Report', marginX, y);
+      y += 20;
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
+      doc.setTextColor(94, 107, 140);
+      doc.text(`${formatDisplayDate(report.fromDate)} \u2013 ${formatDisplayDate(report.toDate)}  \u00b7  ${report.totalSessions} session${report.totalSessions === 1 ? '' : 's'}`, marginX, y);
+      y += 26;
+
+      const cols = [
+        { label: 'Name', w: 150, align: 'left' },
+        { label: 'Roll', w: 55, align: 'left' },
+        { label: 'Present', w: 60, align: 'center' },
+        { label: 'Absent', w: 60, align: 'center' },
+        { label: 'OD', w: 45, align: 'center' },
+        { label: '%', w: 55, align: 'center' }
+      ];
+      const tableWidth = cols.reduce((s,c) => s + c.w, 0);
+
+      function drawHeader(){
+        doc.setFillColor(27, 37, 64);
+        doc.rect(marginX, y, tableWidth, 26, 'F');
+        let x = marginX;
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.setTextColor(255,255,255);
+        cols.forEach(c => {
+          doc.text(c.label, c.align === 'left' ? x + 8 : x + c.w/2, y + 17, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 26;
+      }
+
+      drawHeader();
+      report.rows.forEach((r, i) => {
+        if (y + 24 > bottomLimit){ doc.addPage(); y = 56; drawHeader(); }
+        if (i % 2 === 1){ doc.setFillColor(246, 248, 253); doc.rect(marginX, y, tableWidth, 24, 'F'); }
+        let x = marginX;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+        doc.setTextColor(27, 37, 64);
+        const cells = [r.name, r.roll_no, String(r.present), String(r.absent), String(r.od), r.percentage === null ? '\u2014' : r.percentage + '%'];
+        cells.forEach((val, ci) => {
+          const c = cols[ci];
+          doc.text(String(val), c.align === 'left' ? x + 8 : x + c.w/2, y + 16, { align: c.align === 'left' ? 'left' : 'center' });
+          x += c.w;
+        });
+        y += 24;
+      });
+
+      const pageCount = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= pageCount; p++){
+        doc.setPage(p);
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+        doc.setTextColor(154, 166, 196);
+        doc.text('Generated by Student Absentees Tracker', marginX, pageHeight - 26);
+        doc.text(`Page ${p} of ${pageCount}`, pageWidth - marginX, pageHeight - 26, { align: 'right' });
+      }
+
+      doc.save(`attendance-report-${report.fromDate}-to-${report.toDate}.pdf`);
+      toast.fire('PDF downloaded');
+    }catch(err){
+      console.error(err); toast.fire('Something went wrong');
+    }
+    setPdfBusy(false);
+  }
+
+  async function handleDownloadExcel(){
+    if (!report) return;
+    if (typeof ExcelJS === 'undefined'){ toast.fire('Could not load Excel tool'); return; }
+    try{
+      const wb = new ExcelJS.Workbook();
+      wb.creator = 'Student Absentees Tracker';
+      const ws = wb.addWorksheet('Attendance Report', { views: [{ state: 'frozen', ySplit: 4 }] });
+      ws.columns = [{ width: 24 }, { width: 10 }, { width: 11 }, { width: 11 }, { width: 8 }, { width: 12 }];
+
+      ws.mergeCells('A1:F1');
+      const titleCell = ws.getCell('A1');
+      titleCell.value = 'Attendance Report';
+      titleCell.font = { name: 'Calibri', size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
+      titleCell.alignment = { vertical: 'middle' };
+      ws.getRow(1).height = 28;
+      ws.getRow(1).eachCell(c => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF3E62E8' } }; });
+
+      ws.mergeCells('A2:F2');
+      const subCell = ws.getCell('A2');
+      const holidayNote = report.holidaysExcluded > 0 ? `  \u00b7  ${report.holidaysExcluded} holiday${report.holidaysExcluded === 1 ? '' : 's'} excluded` : '';
+      subCell.value = `${formatDisplayDate(report.fromDate)} \u2013 ${formatDisplayDate(report.toDate)}  \u00b7  ${report.totalSessions} session${report.totalSessions === 1 ? '' : 's'}${holidayNote}`;
+      subCell.font = { name: 'Calibri', size: 10.5, italic: true, color: { argb: 'FF5E6B8C' } };
+      ws.getRow(2).eachCell(c => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEEF2FE' } }; });
+      ws.getRow(2).height = 20;
+
+      const thinLine = (argb) => ({ style: 'thin', color: { argb } });
+      const headerRow = ws.getRow(4);
+      headerRow.values = ['Name', 'Roll No', 'Present', 'Absent', 'OD', 'Percentage'];
+      headerRow.eachCell(c => {
+        c.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF2B47C4' } };
+        c.alignment = { vertical: 'middle', horizontal: 'center' };
+        c.border = { top: thinLine('FFDCE5FB'), bottom: thinLine('FFDCE5FB'), left: thinLine('FFDCE5FB'), right: thinLine('FFDCE5FB') };
+      });
+      headerRow.height = 20;
+
+      report.rows.forEach((r, i) => {
+        const row = ws.addRow([r.name, r.roll_no, r.present, r.absent, r.od, r.percentage === null ? '\u2014' : r.percentage / 100]);
+        const isEven = i % 2 === 1;
+        row.eachCell((c, colNumber) => {
+          c.border = { top: thinLine('FFE4E9F7'), bottom: thinLine('FFE4E9F7'), left: thinLine('FFE4E9F7'), right: thinLine('FFE4E9F7') };
+          c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: isEven ? 'FFF6F8FD' : 'FFFFFFFF' } };
+          c.font = { size: 10.5, color: { argb: 'FF1B2540' } };
+          if (colNumber >= 3) c.alignment = { horizontal: 'center' };
+        });
+        row.getCell(1).font = { size: 10.5, bold: true, color: { argb: 'FF1B2540' } };
+        row.getCell(1).alignment = { horizontal: 'left' };
+        row.getCell(4).font = { size: 10.5, color: { argb: 'FFE0525F' } };
+        row.getCell(5).font = { size: 10.5, color: { argb: 'FFD98A2B' } };
+        const pctCell = row.getCell(6);
+        if (r.percentage !== null){
+          pctCell.numFmt = '0.0%';
+          pctCell.font = { size: 10.5, bold: true, color: { argb: r.percentage < 75 ? 'FFE0525F' : 'FF2FA36B' } };
+        }
+      });
+
+      const buffer = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `attendance-report-${report.fromDate}-to-${report.toDate}.xlsx`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast.fire('Excel file downloaded');
+    }catch(err){
+      console.error(err);
+      toast.fire('Could not create Excel file');
+    }
+  }
   const morningAbsent = useMemo(
     () => [...records].filter(r => r.morning_status === 'absent').sort((a,b) => rollCompare(a.roll_no, b.roll_no)),
     [records]
@@ -912,6 +1105,7 @@ function RepresentativeDashboard({ toast }){
         <button className={tab === 'mark' ? 'active' : ''} onClick={() => setTab('mark')}>Mark</button>
         <button className={tab === 'lists' ? 'active' : ''} onClick={() => setTab('lists')}>Today's Lists</button>
         <button className={tab === 'previous' ? 'active' : ''} onClick={() => setTab('previous')}>Previous</button>
+        <button className={tab === 'reports' ? 'active' : ''} onClick={() => setTab('reports')}>Reports</button>
         <button className={tab === 'manage' ? 'active' : ''} onClick={() => setTab('manage')}>Manage</button>
       </div>
 
@@ -1022,6 +1216,77 @@ function RepresentativeDashboard({ toast }){
                 odList={[...prevRecords].filter(r => r.afternoon_status === 'od').sort((a,b) => rollCompare(a.roll_no, b.roll_no))}
               />
             </React.Fragment>
+          )}
+        </div>
+      )}
+
+      {tab === 'reports' && (
+        <div>
+          <div className="card">
+            <div className="row-2">
+              <div className="field">
+                <label>From date</label>
+                <DatePicker value={fromDate} max={date} onChange={setFromDate} />
+              </div>
+              <div className="field">
+                <label>To date</label>
+                <DatePicker value={toDate} max={date} onChange={setToDate} />
+              </div>
+            </div>
+            <button className="btn btn-primary" style={{ width:'100%' }} onClick={handleGenerateReport} disabled={generating}>
+              <Icon name="calendar" />
+              {generating ? 'Generating…' : 'Generate report'}
+            </button>
+          </div>
+
+          {report && (
+            <div className="card">
+              <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:15.5, marginBottom:2 }}>Attendance Report</div>
+              <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:14 }}>
+                {formatDisplayDate(report.fromDate)} – {formatDisplayDate(report.toDate)} · {report.totalSessions} session{report.totalSessions === 1 ? '' : 's'}
+                {report.holidaysExcluded > 0 && ` · ${report.holidaysExcluded} holiday${report.holidaysExcluded === 1 ? '' : 's'} excluded`}
+              </div>
+
+              {report.rows.length === 0 ? (
+                <div className="empty-state"><p>No students to report on.</p></div>
+              ) : (
+                <div style={{ overflowX:'auto' }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
+                    <thead>
+                      <tr style={{ textAlign:'left', color:'var(--ink-soft)' }}>
+                        <th style={{ padding:'6px 8px' }}>Name</th>
+                        <th style={{ padding:'6px 8px' }}>Roll</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>P</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>A</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>OD</th>
+                        <th style={{ padding:'6px 8px', textAlign:'center' }}>%</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.rows.map(r => (
+                        <tr key={r.id} style={{ borderTop:'1px solid var(--line)' }}>
+                          <td style={{ padding:'8px', fontWeight:600 }}>{r.name}</td>
+                          <td style={{ padding:'8px', color:'var(--ink-soft)' }}>{r.roll_no}</td>
+                          <td style={{ padding:'8px', textAlign:'center' }}>{r.present}</td>
+                          <td style={{ padding:'8px', textAlign:'center', color:'var(--red)' }}>{r.absent}</td>
+                          <td style={{ padding:'8px', textAlign:'center', color:'var(--amber)' }}>{r.od}</td>
+                          <td style={{ padding:'8px', textAlign:'center', fontWeight:600 }}>{r.percentage === null ? '—' : r.percentage + '%'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              <button className="btn btn-outline" style={{ width:'100%', marginTop:14 }} onClick={handleDownloadPDF} disabled={pdfBusy}>
+                <Icon name="download" />
+                {pdfBusy ? 'Preparing PDF…' : 'Download PDF'}
+              </button>
+              <button className="btn btn-outline" style={{ width:'100%', marginTop:10 }} onClick={handleDownloadExcel}>
+                <Icon name="download" />
+                Download Excel
+              </button>
+            </div>
           )}
         </div>
       )}
@@ -1192,9 +1457,10 @@ function TeacherDashboard({ toast }){
     const rows = students.map(s => {
       const mine = records.filter(r => r.student_id === s.id);
       const absentHalf = mine.filter(r => r.morning_status === 'absent').length + mine.filter(r => r.afternoon_status === 'absent').length;
-      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;
-      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf);
-      const percentage = totalHalfDays === 0 ? null : Math.round(((presentHalf + odHalf) / totalHalfDays) * 1000) / 10;
+      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;      const unmarkedHalf = mine.reduce((n, r) => n + (r.morning_status === 'unmarked' ? 1 : 0) + (r.afternoon_status === 'unmarked' ? 1 : 0), 0);
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf - unmarkedHalf);
+      const countedHalfDays = totalHalfDays - unmarkedHalf; // Not Marked half-days are excluded, like holidays
+      const percentage = countedHalfDays <= 0 ? null : Math.round(((presentHalf + odHalf) / countedHalfDays) * 1000) / 10;
       return {
         ...s,
         present: Math.round((presentHalf / 2) * 10) / 10,
@@ -1549,6 +1815,13 @@ function AdminDashboard({ session, toast }){
   const [markRecords, setMarkRecords] = useState([]);
   const [markLoading, setMarkLoading] = useState(false);
 
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkFrom, setBulkFrom] = useState(today);
+  const [bulkTo, setBulkTo] = useState(today);
+  const [bulkSelected, setBulkSelected] = useState({}); // studentId -> true
+  const [bulkStatus, setBulkStatus] = useState('present'); // 'present' | 'absent' | 'od' | 'unmark'
+  const [bulkRunning, setBulkRunning] = useState(false);
+
   const [addStudentOpen, setAddStudentOpen] = useState(false);
   const [studentName, setStudentName] = useState('');
   const [studentRoll, setStudentRoll] = useState('');
@@ -1629,6 +1902,83 @@ function AdminDashboard({ session, toast }){
     if (data && data[0]) setMarkRecords(prev => prev.map(r => r.student_id === student.id ? data[0] : r));
   }
 
+  async function handleBulkMark(){
+    const chosenIds = Object.keys(bulkSelected).filter(id => bulkSelected[id]);
+    if (chosenIds.length === 0){ toast.fire('Select at least one student'); return; }
+    if (!bulkFrom || !bulkTo || bulkFrom > bulkTo){ toast.fire('Pick a valid date range'); return; }
+
+    const chosen = chosenIds.map(id => students.find(s => s.id === id)).filter(Boolean);
+    if (chosen.length === 0){ toast.fire('Student not found'); return; }
+
+    if (bulkStatus === 'unmark'){
+      const ok = window.confirm(
+        `Set attendance to Not Marked for ${chosen.length === 1 ? chosen[0].name : chosen.length + ' students'} between ${formatDisplayDate(bulkFrom)} and ${formatDisplayDate(bulkTo)}, overwriting any Present/Absent/OD already recorded? This can't be undone.`
+      );
+      if (!ok) return;
+    }
+
+    setBulkRunning(true);
+
+    // Every date from From through To inclusive gets the chosen status,
+    // for every selected student. Present, Absent and OD overwrite any
+    // previously recorded status, and Not Marked likewise overwrites
+    // Present/Absent/OD with an explicit unmarked record (so those days
+    // stop counting as Present). Declared holidays are skipped.
+    const holidaySet = new Set(holidays.map(h => h.date));
+    const dates = [];
+    let cursor = parseDateStr(bulkFrom);
+    const end = parseDateStr(bulkTo);
+    while (cursor <= end){
+      const ds = formatDateStr(cursor);
+      if (!holidaySet.has(ds)) dates.push(ds);
+      cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1);
+    }
+    if (dates.length === 0){
+      setBulkRunning(false);
+      toast.fire('Every date in that range is a declared holiday');
+      return;
+    }
+
+    const statusValue = bulkStatus === 'present' ? null : bulkStatus === 'unmark' ? 'unmarked' : bulkStatus;
+    const rows = [];
+    chosen.forEach(student => {
+      dates.forEach(d => {
+        rows.push({
+          student_id: student.id, name: student.name, roll_no: student.roll_no,
+          date: d, day: dayOfWeek(d),
+          morning_status: statusValue, afternoon_status: statusValue, afternoon_manual: true
+        });
+      });
+    });
+
+    const { error: upsertErr } = await db.from('atrk_attendance')
+      .upsert(rows, { onConflict: 'student_id,date' });
+    setBulkRunning(false);
+    if (upsertErr){
+      // Some servers cap the rows per statement — retry in smaller batches.
+      console.error(upsertErr);
+      let lastErr = upsertErr;
+      let saved = 0;
+      for (let i = 0; i < rows.length; i += 200){
+        const { error: batchErr } = await db.from('atrk_attendance')
+          .upsert(rows.slice(i, i + 200), { onConflict: 'student_id,date' });
+        if (batchErr){ console.error(batchErr); lastErr = batchErr; break; }
+        saved += Math.min(200, rows.length - i);
+      }
+      if (saved === 0){ toast.fire('Could not apply bulk marking'); console.error(lastErr); return; }
+      toast.fire(`Marked ${saved} of ${rows.length} entr${rows.length === 1 ? 'y' : 'ies'} — retry the rest`);
+      if (markDate >= bulkFrom && markDate <= bulkTo) loadMarkRecords(markDate);
+      return;
+    }
+
+    const who = chosen.length === 1 ? chosen[0].name : chosen.length + ' students';
+    const entryCount = chosen.length * dates.length;
+    const summary = `${entryCount} entr${entryCount === 1 ? 'y' : 'ies'} (${dates.length} date${dates.length === 1 ? '' : 's'} × ${chosen.length} student${chosen.length === 1 ? '' : 's'})`;
+    toast.fire(bulkStatus === 'unmark' ? `Set ${summary} to Not Marked for ${who}` : `Marked ${summary} for ${who}`);
+
+    if (markDate >= bulkFrom && markDate <= bulkTo) loadMarkRecords(markDate);
+  }
+
   async function callUserFunction(payload){
     const resp = await fetch(`${SUPABASE_URL}/functions/v1/create-user`, {
       method: 'POST',
@@ -1686,6 +2036,41 @@ function AdminDashboard({ session, toast }){
     toast.fire(`${user.email} is now ${roleLabel(newRole)}`);
     setRoleTarget(null);
   }
+
+  const markDateHoliday = holidays.find(h => h.date === markDate);
+
+  // Summary for the currently selected attendance date. Every student
+  // counts as Present by default, so a brand-new date with no records
+  // shows everyone as Present and zero in every other bucket.
+  const markDateSummary = useMemo(() => {
+    const totalHalfDays = students.length * 2;
+    let absentHalf = 0, odHalf = 0, unmarkedHalf = 0;
+    markRecords.forEach(r => {
+      [r.morning_status, r.afternoon_status].forEach(st => {
+        if (st === 'absent') absentHalf++;
+        else if (st === 'od') odHalf++;
+        else if (st === 'unmarked') unmarkedHalf++;
+      });
+    });
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf - unmarkedHalf);
+    const half = (n) => Math.round((n / 2) * 10) / 10;
+    return {
+      total: students.length,
+      present: half(presentHalf),
+      absent: half(absentHalf),
+      od: half(odHalf),
+      unmarked: half(unmarkedHalf)
+    };
+  }, [students, markRecords]);
+
+  const bulkSelectedIds = useMemo(() => Object.keys(bulkSelected).filter(id => bulkSelected[id]), [bulkSelected]);
+  const bulkStudentAll = students.length > 0 && bulkSelectedIds.length === students.length;
+  const toggleBulkAll = () => {
+    setBulkSelected(bulkStudentAll ? {} : Object.fromEntries(students.map(s => [s.id, true])));
+  };
+  const toggleBulkStudent = (id) => {
+    setBulkSelected(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   // ---------- Holidays ----------
   async function handleAddHoliday(){
@@ -1758,9 +2143,10 @@ function AdminDashboard({ session, toast }){
     const rows = students.map(s => {
       const mine = records.filter(r => r.student_id === s.id);
       const absentHalf = mine.filter(r => r.morning_status === 'absent').length + mine.filter(r => r.afternoon_status === 'absent').length;
-      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;
-      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf);
-      const percentage = totalHalfDays === 0 ? null : Math.round(((presentHalf + odHalf) / totalHalfDays) * 1000) / 10;
+      const odHalf = mine.filter(r => r.morning_status === 'od').length + mine.filter(r => r.afternoon_status === 'od').length;      const unmarkedHalf = mine.reduce((n, r) => n + (r.morning_status === 'unmarked' ? 1 : 0) + (r.afternoon_status === 'unmarked' ? 1 : 0), 0);
+      const presentHalf = Math.max(0, totalHalfDays - absentHalf - odHalf - unmarkedHalf);
+      const countedHalfDays = totalHalfDays - unmarkedHalf; // Not Marked half-days are excluded, like holidays
+      const percentage = countedHalfDays <= 0 ? null : Math.round(((presentHalf + odHalf) / countedHalfDays) * 1000) / 10;
       return {
         ...s,
         present: Math.round((presentHalf / 2) * 10) / 10,
@@ -2041,13 +2427,85 @@ function AdminDashboard({ session, toast }){
                   <label>Date</label>
                   <DatePicker value={markDate} max={today} onChange={setMarkDate} />
                 </div>
-                <div style={{ fontSize:11.5, color:'var(--ink-soft)' }}>
-                  Tap AM or PM on a student to set that session's status. Marking Morning auto-fills Afternoon unless it's been hand-edited. As Admin, you can mark any past date — Representatives and Teachers can only mark today.
+                <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:10 }}>
+                  <span className="count" style={{ fontSize:11 }}>Total: {markDateSummary.total}</span>
+                  <span className="count" style={{ fontSize:11, background:'var(--green-tint)', color:'var(--green)' }}>Present: {markDateSummary.present}</span>
+                  <span className="count red" style={{ fontSize:11 }}>Absent: {markDateSummary.absent}</span>
+                  <span className="count amber" style={{ fontSize:11 }}>OD: {markDateSummary.od}</span>
+                  <span className="count" style={{ fontSize:11, background:'#F2F4FA', color:'var(--ink-soft)' }}>Not Marked: {markDateSummary.unmarked}</span>
                 </div>
+                <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginBottom:12 }}>
+                  New dates start with everyone Present — tap a student to change them to Absent, OD or Not Marked. Reopening a saved date loads exactly what was recorded. Marking Morning auto-fills Afternoon unless it's been hand-edited.
+                </div>
+                <button className="btn btn-outline" style={{ width:'100%' }} onClick={() => setBulkOpen(v => !v)}>
+                  <Icon name="calendar" />
+                  {bulkOpen ? 'Hide bulk mark' : 'Bulk mark students across a date range'}
+                </button>
               </div>
 
+              {bulkOpen && (
+                <div className="card">
+                  <div style={{ fontFamily:'Sora, sans-serif', fontWeight:700, fontSize:14, marginBottom:12 }}>Bulk mark students</div>
+                  <div className="row-2">
+                    <div className="field">
+                      <label>From date</label>
+                      <DatePicker value={bulkFrom} max={today} onChange={setBulkFrom} />
+                    </div>
+                    <div className="field">
+                      <label>To date</label>
+                      <DatePicker value={bulkTo} max={today} onChange={setBulkTo} />
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label>Selected Students ({bulkSelectedIds.length} of {students.length})</label>
+                    <div style={{ border:'1.5px solid var(--line)', borderRadius:14, background:'#FBFCFF', maxHeight:210, overflowY:'auto' }}>
+                      <label style={{ display:'flex', alignItems:'center', gap:9, padding:'10px 13px', borderBottom:'1px solid var(--line)', cursor:'pointer', fontSize:13, fontWeight:600 }}>
+                        <input type="checkbox" checked={bulkStudentAll} onChange={toggleBulkAll} style={{ width:16, height:16, accentColor:'var(--indigo)' }} />
+                        Select all
+                      </label>
+                      {[...students].sort((a,b) => rollCompare(a.roll_no, b.roll_no)).map(s => (
+                        <label
+                          key={s.id}
+                          style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 13px', borderBottom:'1px solid var(--line)', cursor:'pointer', fontSize:13, background: bulkSelected[s.id] ? 'var(--indigo-tint)' : 'transparent' }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!!bulkSelected[s.id]}
+                            onChange={() => toggleBulkStudent(s.id)}
+                            style={{ width:16, height:16, accentColor:'var(--indigo)' }}
+                          />
+                          <span style={{ flex:1 }}>
+                            <span style={{ fontWeight:600 }}>{s.roll_no} – {s.name}</span>
+                          </span>
+                          {bulkSelected[s.id] && <Icon name="check" style={{ width:14, height:14, color:'var(--indigo-deep)' }} />}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="field">
+                    <label>Status to apply</label>
+                    <select value={bulkStatus} onChange={e => setBulkStatus(e.target.value)}>
+                      <option value="present">Present</option>
+                      <option value="absent">Absent</option>
+                      <option value="od">OD (On Duty)</option>
+                      <option value="unmark">Not Marked</option>
+                    </select>
+                  </div>
+                  <div style={{ fontSize:11, color:'var(--ink-soft)', marginBottom:12 }}>
+                    {`Applies ${BULK_LABELS[bulkStatus]} to every date from ${formatDisplayDate(bulkFrom)} through ${formatDisplayDate(bulkTo)}, inclusive, for the selected students — overwriting any Present/Absent/OD already recorded. Declared holidays are skipped.`}
+                  </div>
+                  <button
+                    className={bulkStatus === 'unmark' ? 'btn btn-danger-outline' : 'btn btn-primary'}
+                    style={{ width:'100%', ...(bulkStatus === 'unmark' ? { padding: '13px 18px', fontSize: 14.5 } : {}) }}
+                    onClick={handleBulkMark}
+                    disabled={bulkRunning}
+                  >
+                    {bulkRunning ? 'Applying…' : 'Apply Bulk Mark'}
+                  </button>
+                </div>
+              )}
+
               {(() => {
-                const markDateHoliday = holidays.find(h => h.date === markDate);
                 if (markDateHoliday){
                   return (
                     <div className="card" style={{ textAlign:'center', padding:'32px 20px' }}>
