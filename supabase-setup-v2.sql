@@ -12,7 +12,7 @@ create extension if not exists "uuid-ossp";
 -- ---------- profiles (role linked to a Supabase Auth user) ----------
 create table if not exists atrk_profiles (
   id uuid primary key references auth.users(id) on delete cascade,
-  email text not null,
+  email text not null check (char_length(email) between 3 and 320),
   role  text not null check (role in ('admin','teacher','representative')),
   created_at timestamptz not null default now()
 );
@@ -20,8 +20,8 @@ create table if not exists atrk_profiles (
 -- ---------- student roster ----------
 create table if not exists atrk_students (
   id uuid primary key default uuid_generate_v4(),
-  name text not null,
-  roll_no text not null unique,
+  name text not null check (char_length(name) between 1 and 200),
+  roll_no text not null unique check (char_length(roll_no) between 1 and 100),
   created_at timestamptz not null default now()
 );
 
@@ -37,8 +37,8 @@ create table if not exists atrk_attendance (
   student_id uuid not null references atrk_students(id) on delete cascade,
   name text not null,
   roll_no text not null,
-  date text not null,          -- 'YYYY-MM-DD'
-  day  text not null,          -- 'Monday' etc.
+  date text not null check (date ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'),
+  day  text not null check (day in ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday')),
   morning_status   text check (morning_status in ('absent','od','unmarked')),
   afternoon_status text check (afternoon_status in ('absent','od','unmarked')),
   afternoon_manual boolean not null default false,  -- PM was hand-edited, stop mirroring AM into it
@@ -46,77 +46,213 @@ create table if not exists atrk_attendance (
   unique (student_id, date)    -- one record per student per day (AM + PM)
 );
 
+create or replace function public.atrk_attendance_identity()
+returns trigger
+language plpgsql
+security invoker
+set search_path = pg_catalog, public
+as $$
+declare
+  parsed_date date;
+  student_name text;
+  student_roll text;
+begin
+  begin
+    parsed_date := new.date::date;
+  exception when others then
+    raise exception 'Invalid attendance date';
+  end;
+
+  if to_char(parsed_date, 'YYYY-MM-DD') <> new.date then
+    raise exception 'Invalid attendance date';
+  end if;
+
+  new.date := to_char(parsed_date, 'YYYY-MM-DD');
+  new.day := case extract(isodow from parsed_date)
+    when 1 then 'Monday'
+    when 2 then 'Tuesday'
+    when 3 then 'Wednesday'
+    when 4 then 'Thursday'
+    when 5 then 'Friday'
+    when 6 then 'Saturday'
+    when 7 then 'Sunday'
+  end;
+
+  select name, roll_no into student_name, student_roll
+  from public.atrk_students
+  where id = new.student_id;
+
+  if student_name is null then
+    raise exception 'Student does not exist';
+  end if;
+
+  new.name := student_name;
+  new.roll_no := student_roll;
+  return new;
+end;
+$$;
+
+drop trigger if exists atrk_attendance_identity on public.atrk_attendance;
+create trigger atrk_attendance_identity
+before insert or update on public.atrk_attendance
+for each row execute function public.atrk_attendance_identity();
+
 -- ---------- declared holidays ----------
 -- Holidays are skipped by bulk marking and excluded from reports and
 -- the attendance percentage.
 create table if not exists atrk_holidays (
   id uuid primary key default uuid_generate_v4(),
-  date text not null unique,   -- 'YYYY-MM-DD'
-  reason text not null,
+  date text not null unique check (date ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'),
+  reason text not null check (char_length(reason) between 1 and 500),
   created_at timestamptz not null default now()
 );
 
+create or replace function public.atrk_validate_holiday_date()
+returns trigger
+language plpgsql
+security invoker
+set search_path = pg_catalog, public
+as $$
+declare
+  parsed_date date;
+begin
+  begin
+    parsed_date := new.date::date;
+  exception when others then
+    raise exception 'Invalid holiday date';
+  end;
+
+  if to_char(parsed_date, 'YYYY-MM-DD') <> new.date then
+    raise exception 'Invalid holiday date';
+  end if;
+
+  new.date := to_char(parsed_date, 'YYYY-MM-DD');
+  return new;
+end;
+$$;
+
+drop trigger if exists atrk_validate_holiday_date on public.atrk_holidays;
+create trigger atrk_validate_holiday_date
+before insert or update on public.atrk_holidays
+for each row execute function public.atrk_validate_holiday_date();
+
 -- ---------- helper functions used inside RLS policies ----------
-create or replace function atrk_current_role()
+create schema if not exists private;
+revoke all on schema private from public, anon, authenticated, service_role;
+grant usage on schema private to authenticated;
+
+create or replace function private.atrk_current_role()
 returns text
 language sql
 security definer
-set search_path = public
+set search_path = pg_catalog, public
 as $$
-  select role from atrk_profiles where id = auth.uid();
+  select role from public.atrk_profiles where id = auth.uid();
 $$;
 
-create or replace function atrk_is_admin()
+create or replace function private.atrk_is_admin()
 returns boolean
 language sql
 security definer
-set search_path = public
+set search_path = pg_catalog, public
 as $$
-  select atrk_current_role() = 'admin';
+  select private.atrk_current_role() = 'admin';
 $$;
 
+revoke all on function private.atrk_current_role() from public, anon, authenticated, service_role;
+revoke all on function private.atrk_is_admin() from public, anon, authenticated, service_role;
+revoke all on function public.atrk_attendance_identity() from public, anon, authenticated, service_role;
+revoke all on function public.atrk_validate_holiday_date() from public, anon, authenticated, service_role;
+grant execute on function private.atrk_current_role() to authenticated;
+grant execute on function private.atrk_is_admin() to authenticated;
+
 -- ---------- Row Level Security ----------
-alter table atrk_profiles   enable row level security;
-alter table atrk_students   enable row level security;
-alter table atrk_attendance enable row level security;
-alter table atrk_holidays   enable row level security;
+alter table public.atrk_profiles   enable row level security;
+alter table public.atrk_students   enable row level security;
+alter table public.atrk_attendance enable row level security;
+alter table public.atrk_holidays   enable row level security;
 
--- profiles: everyone can read their own row; admins can read/write all rows
-create policy "read own profile" on atrk_profiles for select
-  to authenticated using (id = auth.uid() or atrk_is_admin());
-create policy "admin manages profiles" on atrk_profiles for all
-  to authenticated using (atrk_is_admin()) with check (atrk_is_admin());
+revoke all on public.atrk_profiles from anon;
+revoke all on public.atrk_students from anon;
+revoke all on public.atrk_attendance from anon;
+revoke all on public.atrk_holidays from anon;
 
--- students: any signed-in role can view; teacher/rep/admin can add;
--- only teacher/admin can delete (matches the brief — reps can add
--- students but only teachers/admins remove them)
-create policy "signed-in users read students" on atrk_students for select
-  to authenticated using (true);
-create policy "teacher rep admin add students" on atrk_students for insert
-  to authenticated with check (atrk_current_role() in ('teacher','representative','admin'));
-create policy "teacher admin delete students" on atrk_students for delete
-  to authenticated using (atrk_current_role() in ('teacher','admin'));
+do $$
+declare
+  policy_record record;
+begin
+  for policy_record in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and tablename in ('atrk_profiles', 'atrk_students', 'atrk_attendance', 'atrk_holidays')
+  loop
+    execute format(
+      'drop policy %I on %I.%I',
+      policy_record.policyname,
+      policy_record.schemaname,
+      policy_record.tablename
+    );
+  end loop;
+end;
+$$;
 
--- attendance: any signed-in role can view (teachers need it for reports);
--- representative/admin mark and correct — the app saves corrections with
--- upsert (INSERT ... ON CONFLICT DO UPDATE), so an update policy is
--- required alongside insert/delete. Teachers read-only here.
-create policy "signed-in users read attendance" on atrk_attendance for select
-  to authenticated using (true);
-create policy "rep admin insert attendance" on atrk_attendance for insert
-  to authenticated with check (atrk_current_role() in ('representative','admin'));
-create policy "rep admin update attendance" on atrk_attendance for update
-  to authenticated using (atrk_current_role() in ('representative','admin'))
-  with check (atrk_current_role() in ('representative','admin'));
-create policy "rep admin delete attendance" on atrk_attendance for delete
-  to authenticated using (atrk_current_role() in ('representative','admin'));
+create policy "read own profile" on public.atrk_profiles for select
+  to authenticated using (id = auth.uid() or private.atrk_is_admin());
+create policy "admin manages profiles" on public.atrk_profiles for all
+  to authenticated using (private.atrk_is_admin()) with check (private.atrk_is_admin());
 
--- holidays: everyone signed in can read (reports filter by them);
--- only admin declares/removes
-create policy "signed-in users read holidays" on atrk_holidays for select
-  to authenticated using (true);
-create policy "admin manages holidays" on atrk_holidays for all
-  to authenticated using (atrk_is_admin()) with check (atrk_is_admin());
+create policy "signed-in users read students" on public.atrk_students for select
+  to authenticated using (private.atrk_current_role() in ('admin','teacher','representative'));
+create policy "teacher rep admin add students" on public.atrk_students for insert
+  to authenticated with check (private.atrk_current_role() in ('teacher','representative','admin'));
+create policy "teacher admin delete students" on public.atrk_students for delete
+  to authenticated using (private.atrk_current_role() in ('teacher','admin'));
+
+create policy "signed-in users read attendance" on public.atrk_attendance for select
+  to authenticated using (private.atrk_current_role() in ('admin','teacher','representative'));
+create policy "rep admin insert attendance" on public.atrk_attendance for insert
+  to authenticated with check (private.atrk_current_role() in ('representative','admin'));
+create policy "rep admin update attendance" on public.atrk_attendance for update
+  to authenticated using (private.atrk_current_role() in ('representative','admin'))
+  with check (private.atrk_current_role() in ('representative','admin'));
+create policy "rep admin delete attendance" on public.atrk_attendance for delete
+  to authenticated using (private.atrk_current_role() in ('representative','admin'));
+
+create policy "signed-in users read holidays" on public.atrk_holidays for select
+  to authenticated using (private.atrk_current_role() in ('admin','teacher','representative'));
+create policy "admin manages holidays" on public.atrk_holidays for all
+  to authenticated using (private.atrk_is_admin()) with check (private.atrk_is_admin());
+
+drop function if exists public.atrk_current_role();
+drop function if exists public.atrk_is_admin();
+
+do $$
+declare
+  legacy_table text;
+  policy_record record;
+begin
+  foreach legacy_table in array array['students', 'absentees'] loop
+    if to_regclass('public.' || legacy_table) is not null then
+      execute format('alter table public.%I enable row level security', legacy_table);
+      execute format('revoke all on public.%I from anon', legacy_table);
+      for policy_record in
+        select schemaname, tablename, policyname
+        from pg_policies
+        where schemaname = 'public'
+          and tablename = legacy_table
+      loop
+        execute format(
+          'drop policy %I on %I.%I',
+          policy_record.policyname,
+          policy_record.schemaname,
+          policy_record.tablename
+        );
+      end loop;
+    end if;
+  end loop;
+end;
+$$;
 
 -- ============================================================
 -- BOOTSTRAP: creating your first Admin account

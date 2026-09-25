@@ -1,59 +1,49 @@
-# Student Absentees Tracker
+# Student Absentees Tracker v2
 
-A mobile-friendly attendance tracker built with React (via CDN, no build step) and Supabase. Mark students absent, keep a daily log, and share the list as an image, text message, or PDF.
+A mobile-friendly attendance tracker built with React and Supabase. It supports role-based dashboards for administrators, teachers, and representatives, attendance marking, roster management, and PDF/Excel/CSV reports.
 
-## Features
+## Security setup
 
-- Add / delete students (roster is permanent)
-- Tap a student to mark them absent for today; tap again to undo
-- Duplicate-roll protection, search, sort by roll number
-- Manage mode for deliberate deletions (no accidental long-press deletes)
-- Share the daily absentee list as an image, plain text, or a vector PDF
-- Works offline — cached data shows with no connection, and any changes
-  made offline (add/delete student, mark/unmark absent) sync automatically
-  once you're back online
-- Installable as a PWA (Add to Home Screen)
+1. Create a Supabase project.
+2. In **Authentication → Sign In / Providers**, disable public signups. Accounts must be created by an administrator.
+3. Run `supabase-setup-v2.sql` in the Supabase SQL Editor. The script enables RLS and grants data access only to users with an `atrk_profiles` role.
+4. Create the first administrator manually in **Authentication → Users**, then add its profile using the SQL example in `SETUP.md`.
+5. Deploy the Edge Function:
 
-## Setup
-
-1. **Create a Supabase project** at [supabase.com](https://supabase.com).
-2. **Run the SQL** in `supabase-setup.sql` via your project's SQL Editor.
-   This creates the `students` and `absentees` tables plus RLS policies
-   for the anon/publishable key.
-3. **Add your credentials** — open `index.html`, find these two lines near
-   the top of the `<script>` block, and fill in your project's values
-   (Settings → API in your Supabase dashboard):
-   ```js
-   const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-   const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+   ```bash
+   supabase login
+   supabase link --project-ref nwqhigskbldybobcdrgv
+   supabase secrets set APP_ORIGINS="https://absentcse.netlify.app"
+   supabase functions deploy create-user
    ```
-   Only use the **publishable/anon** key here — it's meant to be public.
-   Never put your **secret/service_role** key in this file.
+
+   Set `APP_ORIGINS` to a comma-separated allowlist when the app is hosted on additional domains.
+6. Put only the project URL and publishable/anon key in `index.html`. Never put the service-role key in the browser or repository.
 
 ## Deploying
 
-This is a static site — no build step. Any static host works.
+This is a static site. Deploy the entire folder, including `index.html`, `manifest.json`, `sw.js`, the icon files, and `netlify.toml`.
 
-**Netlify:** drag the whole project folder onto the Deploys tab.
+`netlify.toml` adds baseline security headers for Netlify deployments. Other static hosts must configure equivalent headers.
 
-**GitHub Pages:** push this repo, then in *Settings → Pages* set the
-source to your default branch, root directory.
+## Technology
 
-Either way, deploy the **entire folder** (`index.html`, `manifest.json`,
-`sw.js`, the icon files) — not just `index.html` — or the PWA icons and
-offline support won't work.
+- React 18 and Babel Standalone
+- Supabase Auth, Postgres, and REST API
+- html2canvas, jsPDF, and ExcelJS
+- Vanilla service worker for application-shell caching
 
-## Tech
+## Security properties
 
-- React 18 + Babel Standalone (in-browser JSX, no build tooling)
-- Supabase (Postgres + REST API)
-- html2canvas (image export) + jsPDF (PDF export)
-- Vanilla service worker for offline support and installability
+- Row Level Security is enabled on all v2 tables.
+- Read policies require an authenticated profile with an allowed role; a logged-in account without a role receives no v2 data.
+- The service-role key is used only inside the admin-protected Edge Function.
+- Edge Function requests validate method, content type, body size, UUIDs, email addresses, roles, and password length, and restrict browser origins.
+- CDN scripts are version-pinned and protected with Subresource Integrity.
+- CSV exports neutralize spreadsheet formula prefixes.
+- Large Supabase result sets are fetched in stable-order pages.
+- The legacy `supabase-setup.sql` script creates tables with RLS enabled and no anonymous policies; `supabase-setup-v2.sql` also removes legacy anonymous policies when those tables already exist.
 
-## Security note
+## Important
 
-Row Level Security policies in `supabase-setup.sql` allow the public
-anon key to read/write both tables — there's no login system. That's
-fine for personal/classroom use, but anyone with the deployed URL can
-view or modify the data through the API. Add Supabase Auth first if
-you plan to deploy this somewhere more public.
+The v2 app requires a live Supabase connection. The service worker caches the application shell only; it does not cache student data or queue offline mutations.

@@ -1,87 +1,77 @@
 # Student Absentees Tracker v2 — Setup Guide
 
-This version adds email/password login with three roles (Admin, Teacher,
-Representative), an "On Duty" attendance status, and date-range PDF
-reports. It uses **new database tables** (`atrk_*` prefix) in the same
-Supabase project as before — your old `students`/`absentees` tables
-from the previous version are untouched.
+This version uses Supabase Auth with three roles: Admin, Teacher, and Representative. It uses the `atrk_*` tables and does not read the legacy `students` or `absentees` tables.
 
-## 1. Run the database setup
+## 1. Secure the Supabase project
 
-Supabase dashboard → **SQL Editor** → New query → paste the entire
-contents of `supabase-setup-v2.sql` → Run.
+1. Create or open the Supabase project.
+2. In **Authentication → Sign In / Providers**, disable public signups.
+3. Run `supabase-setup-v2.sql` in the SQL Editor after reviewing it. It enables RLS, replaces the v2 policies with role-gated policies, and installs an attendance identity trigger.
+4. Do not use `supabase-setup.sql` for v2. That legacy script drops the old tables and recreates them without anonymous access. The v2 script also removes legacy anonymous policies without dropping existing legacy tables.
 
-This creates:
-- `atrk_profiles` — links a login to a role (admin/teacher/representative)
-- `atrk_students` — the roster
-- `atrk_attendance` — daily absent/OD records
-- Row Level Security policies for all three
+## 2. Create the first Admin account
 
-## 2. Create your first Admin account
+1. In **Authentication → Users**, add an email and password with **Auto Confirm User** enabled.
+2. Copy the new user's UUID.
+3. Add its profile in the SQL Editor:
 
-The app can only create new users through an **Admin-only** function —
-so the very first Admin has to be created by hand, once:
-
-1. Supabase dashboard → **Authentication → Users → Add user**
-2. Enter an email + password, check **"Auto Confirm User"**, click Create
-3. Copy that user's UUID from the users list
-4. Back in the SQL Editor, run (with your own values):
    ```sql
-   insert into atrk_profiles (id, email, role)
-   values ('PASTE-THE-UUID-HERE', 'your-admin-email@example.com', 'admin');
+   insert into public.atrk_profiles (id, email, role)
+   values ('PASTE-THE-UUID-HERE', 'admin@example.com', 'admin');
    ```
 
-You can now log into the app with that email/password as Admin, and
-create Teacher/Representative accounts from the Admin Dashboard itself.
+4. Sign in as that administrator and use the Admin Dashboard to create Teacher and Representative accounts.
+
+New and reset passwords must contain 12–128 characters.
 
 ## 3. Deploy the Edge Function
 
-This is what lets the Admin Dashboard create new users securely — the
-function runs on Supabase's servers and is the only place the secret
-`service_role` key is ever used. It's never in `index.html`.
-
-Install the Supabase CLI if you don't have it, then from this project
-folder:
+From the project directory:
 
 ```bash
 supabase login
 supabase link --project-ref nwqhigskbldybobcdrgv
+supabase secrets set APP_ORIGINS="https://absentcse.netlify.app"
 supabase functions deploy create-user
 ```
 
-That's it — `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and
-`SUPABASE_SERVICE_ROLE_KEY` are all injected automatically by Supabase
-inside the function. Nothing to configure by hand.
+`APP_ORIGINS` is a comma-separated allowlist of browser origins. Keep it limited to origins that host the app. The function accepts only admin sessions and never exposes the service-role key to the browser.
 
-## 4. Deploy the app itself
+## 4. Deploy the app
 
-Same as before — this is a static site, no build step. Deploy the
-**whole folder** (`index.html`, `manifest.json`, `sw.js`, the icon
-files) to Netlify, GitHub Pages, or wherever you're hosting it. The
-`supabase/` folder and `.sql`/`.md` files aren't needed by the deployed
-site — those are just for your own setup reference.
+Deploy the complete folder to Netlify or another static host. Keep `netlify.toml` when using Netlify so the security headers are applied. The browser file contains only the Supabase publishable/anon key.
 
-## How attendance percentage is calculated
+## Attendance rules
 
-There's no school calendar built in, so "total days" is defined as
-**the number of distinct dates in the selected range that have at
-least one attendance record** — i.e. days someone actually took
-attendance. For each student:
+Each date represents Morning and Afternoon sessions. A null status means Present; `absent`, `od`, and `unmarked` are explicit exceptions. Declared holidays are excluded from reports and bulk marking.
 
-- **Absent** = their absent records in that range
-- **OD** = their On Duty records in that range
-- **Present** = total session days − Absent − OD
-- **Percentage** = (Present + OD) ÷ total session days
+Report queries and roster loads use stable-order pagination so Supabase row limits do not silently truncate results. CSV exports prefix cells that could be interpreted as spreadsheet formulas.
 
-OD counts toward the percentage as if present, since the student was
-on official duty rather than truant. If you'd rather OD not count
-toward the percentage, that's a one-line change I can make.
+## Verify the deployed policies
 
-## What's different from the previous version
+Run this read-only query in the Supabase SQL Editor:
 
-This build does **not** include the offline-mode/sync-queue system
-from the previous version — between the new auth layer, three
-dashboards, and PDF reporting, adding full offline support on top
-would be a substantial second project. Everything here requires a
-live connection. Let me know if you want offline support layered in
-next.
+```sql
+select
+  tablename,
+  policyname,
+  roles,
+  cmd,
+  qual,
+  with_check
+from pg_policies
+where schemaname = 'public'
+  and tablename in (
+    'atrk_profiles',
+    'atrk_students',
+    'atrk_attendance',
+    'atrk_holidays'
+  )
+order by tablename, policyname;
+```
+
+Confirm that v2 read policies require `atrk_current_role()` and that no `anon` policies or grants provide access to `atrk_*` or legacy tables.
+
+## Offline behavior
+
+The v2 app requires a live Supabase connection. The service worker caches the application shell only; it does not cache student data or synchronize offline mutations.

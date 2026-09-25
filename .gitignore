@@ -13,3 +13,5 @@ Thumbs.db
 
 # Supabase CLI local state
 supabase/.temp/
+.netlify/
+dist/

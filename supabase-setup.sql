@@ -34,28 +34,8 @@ create table absentees (
 );
 
 -- ---------- Row Level Security ----------
-alter table students  enable row level security;
-alter table absentees enable row level security;
+alter table public.students  enable row level security;
+alter table public.absentees enable row level security;
 
--- The app uses the public anon/publishable key with no login system,
--- so the anon role needs read/write access to both tables.
--- ⚠️ Fine for a classroom/demo tool; add real auth + tighter
--- policies before using this for anything sensitive.
-
-create policy "Allow anon select on students"
-  on students for select to anon using (true);
-
-create policy "Allow anon insert on students"
-  on students for insert to anon with check (true);
-
-create policy "Allow anon delete on students"
-  on students for delete to anon using (true);
-
-create policy "Allow anon select on absentees"
-  on absentees for select to anon using (true);
-
-create policy "Allow anon insert on absentees"
-  on absentees for insert to anon with check (true);
-
-create policy "Allow anon delete on absentees"
-  on absentees for delete to anon using (true);
+revoke all on public.students from anon;
+revoke all on public.absentees from anon;
