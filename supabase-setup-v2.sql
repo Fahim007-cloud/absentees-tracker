@@ -97,6 +97,35 @@ create trigger atrk_attendance_identity
 before insert or update on public.atrk_attendance
 for each row execute function public.atrk_attendance_identity();
 
+-- Renaming a student must not leave their past attendance showing the old
+-- name. atrk_attendance_identity already re-derives name/roll from
+-- atrk_students on every attendance write, but nothing rewrote the existing
+-- rows when the student itself changed. This cascade fires on that change
+-- instead; it runs as definer because teachers and reps may edit a student
+-- without having UPDATE rights on atrk_attendance.
+create or replace function public.atrk_propagate_student_identity()
+returns trigger
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+begin
+  if new.name is distinct from old.name or new.roll_no is distinct from old.roll_no then
+    update public.atrk_attendance
+       set name = new.name, roll_no = new.roll_no
+     where student_id = new.id;
+  end if;
+  return new;
+end;
+$$;
+
+revoke all on function public.atrk_propagate_student_identity() from public, anon, authenticated, service_role;
+
+drop trigger if exists atrk_propagate_student_identity on public.atrk_students;
+create trigger atrk_propagate_student_identity
+after update on public.atrk_students
+for each row execute function public.atrk_propagate_student_identity();
+
 -- ---------- declared holidays ----------
 -- Holidays are skipped by bulk marking and excluded from reports and
 -- the attendance percentage.
@@ -208,6 +237,10 @@ create policy "teacher rep admin add students" on public.atrk_students for inser
   to authenticated with check (private.atrk_current_role() in ('teacher','representative','admin'));
 create policy "teacher admin delete students" on public.atrk_students for delete
   to authenticated using (private.atrk_current_role() in ('teacher','admin'));
+create policy "teacher rep admin update students" on public.atrk_students for update
+  to authenticated
+  using (private.atrk_current_role() in ('teacher','representative','admin'))
+  with check (private.atrk_current_role() in ('teacher','representative','admin'));
 
 create policy "signed-in users read attendance" on public.atrk_attendance for select
   to authenticated using (private.atrk_current_role() in ('admin','teacher','representative'));
